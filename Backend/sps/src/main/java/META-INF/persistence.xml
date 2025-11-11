@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="3.0" xmlns="https://jakarta.ee/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+	<persistence-unit name="materialdata" transaction-type="JTA">
+		<jta-data-source>java:/jboss/datasources/OrcleDatasourceSMC</jta-data-source>
+
+		<class>com.it.sps.entity.Inmatm</class>
+		<class>com.it.sps.entity.Inwrhmtm</class>
+		<class>com.it.sps.entity.Spestmtm</class>
+		<class>com.it.sps.entity.SpestmtmPK</class>
+		<class>com.it.sps.entity.InwrhmtmPK</class>
+
+		<class>com.it.sps.entity.Pcesthtt</class>
+		<class>com.it.sps.entity.PcesthttPK</class>
+		<class>com.it.sps.entity.Pcestdtt</class>
+		<class>com.it.sps.entity.PcestdttPK</class>
+		<class>com.it.sps.entity.Applicant</class>
+		<class>com.it.sps.entity.Application</class>
+		<class>com.it.sps.entity.ApplicationPK</class>
+		<class>com.it.sps.entity.WiringLandDetail</class>
+		<class>com.it.sps.entity.WiringLandDetailPK</class>
+		<class>com.it.sps.entity.Spestlab</class>
+		<class>com.it.sps.entity.SpestlabPK</class>
+		<class>com.it.sps.entity.Splabrat</class>
+		<class>com.it.sps.entity.SplabratPK</class>
+		<class>com.it.sps.entity.Sauserm</class>
+		<class>com.it.sps.entity.Activity</class>
+		<class>com.it.sps.entity.Userrole</class>
+		<class>com.it.sps.entity.UserroleActivity</class>
+		<class>com.it.sps.entity.UserroleActivityPK</class>
+
+		<properties>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.Oracle12cDialect"/>
+			<property name="hibernate.hbm2ddl.auto" value="update"/>
+			<property name="hibernate.show_sql" value="true"/>
+			<property name="hibernate.format_sql" value="true"/>
+		</properties>
+
+	</persistence-unit>
+</persistence>
