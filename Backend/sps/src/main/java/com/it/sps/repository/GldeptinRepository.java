@@ -6,7 +6,6 @@ import com.it.sps.entity.Gldeptin;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
 import java.util.List;
 
 public interface GldeptinRepository extends JpaRepository<Gldeptin, String> {
@@ -20,7 +19,10 @@ public interface GldeptinRepository extends JpaRepository<Gldeptin, String> {
             "AND SUBSTRING(d.deptId, 1, 3) = SUBSTRING(:prefix,1,3) " +
             "ORDER BY d.deptFullName")
     List<DepotDto> findDepotDepartments(@Param("prefix") String deptId);
+
     List<Gldeptin> findByDeptAreaIgnoreCase(String deptArea);
 
-
+    // Trim deptId and substring rptUser to handle CHAR padding
+    @Query("SELECT g.deptId FROM Gldeptin g WHERE TRIM(g.deptId) = TRIM(SUBSTRING(:rptUser, 1, 6))")
+    String findDeptIdByRptUser(@Param("rptUser") String rptUser);
 }

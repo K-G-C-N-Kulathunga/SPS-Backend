@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "SPSTDESTDMT")
+@Table(name = "SPSTDESTDMT", schema = "PRODMISS")
 public class Spstdestdmt {
     @EmbeddedId
     private SpstdestdmtId id;
