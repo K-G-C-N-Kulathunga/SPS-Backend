@@ -33,7 +33,7 @@ public class Spestedy {
     @Column(name = "SUBURB", length = 50)
     private String suburb;
 
-    @Column(name = "STATUS", length = 20)
+    @Column(name = "STATUS", length = 1)
     private String status;
 
     @Column(name = "ALLOCATED_BY", length = 10)
@@ -49,7 +49,7 @@ public class Spestedy {
     @Column(name = "ALLOCATED_TO", length = 10)
     private String allocatedTo;
 
-    @Column(name = "DESCRIPTION", length = 100)
+    @Column(name = "DESCRIPTION", length = 200)
     private String description;
 
     // ------------------- Foreign Key Relationships ----------------------
