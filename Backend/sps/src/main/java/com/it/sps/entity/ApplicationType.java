@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "APPLICATIONTYPES", schema = "PRODMISS")
+@Table(name = "APPLICATIONTYPES")
 public class ApplicationType {
     @Id
     @Column(name = "APPTYPE", nullable = false, length = 50)
