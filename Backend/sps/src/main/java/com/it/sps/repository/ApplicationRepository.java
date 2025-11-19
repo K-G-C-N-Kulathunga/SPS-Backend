@@ -6,13 +6,11 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-import com.it.sps.dto.SchedulerApplicationDto;
-
 import com.it.sps.entity.Application;
 import com.it.sps.entity.ApplicationPK;
 
 public interface ApplicationRepository extends JpaRepository<Application,ApplicationPK>{
-
+	
 		 @Query(" SELECT a FROM Application a WHERE a.applicationNo=:applicationNo ")
 		 Application findAllWithApplicant(@Param("applicationNo")String applicationNo);
 
@@ -31,6 +29,7 @@ public interface ApplicationRepository extends JpaRepository<Application,Applica
 
 	    @Query("SELECT COUNT(a) > 0 FROM Application a WHERE a.applicationNo = :applicationNo")
 	    boolean existsByApplicationNo(String applicationNo);
+		
 		@Query("SELECT a FROM Application a " +
             "WHERE a.id.deptId = :deptId AND a.applicationType = :applicationType")
     	List<Application> findByDeptIdAndType(@Param("deptId") String deptId,
@@ -54,4 +53,5 @@ public interface ApplicationRepository extends JpaRepository<Application,Applica
 		List<Application> findApplicationsByDeptTypeStatus(@Param("deptId") String deptId,
 													   @Param("applicationType") String applicationType,
 													   @Param("status") String status);
+
 }

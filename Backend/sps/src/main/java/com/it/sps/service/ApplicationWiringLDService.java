@@ -22,8 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Year;
@@ -61,62 +59,6 @@ public class ApplicationWiringLDService {
     }
 
 
-//    public String saveFullApplication(FormDataDto formData) {
-//        String applicationId = generateApplicationId(formData.getApplicationDto().getDeptId());
-//        String applicationNo = generateApplicationNo(formData.getApplicationDto().getDeptId());
-//
-//        formData.getApplicationDto().setApplicationId(applicationId);
-//        formData.getApplicationDto().setApplicationNo(applicationNo);
-//        formData.getWiringLandDetailDto().setApplicationId(applicationId);
-//        formData.getWiringLandDetailDto().setDeptId(formData.getApplicationDto().getDeptId());
-//
-//        Applicant applicant = createApplicant(formData.getApplicantDto());
-//
-//        // Save Application entity
-//        Application application = new Application();
-//        ApplicationPK applicationPK = new ApplicationPK();
-//        applicationPK.setApplicationId(applicationId);
-//        applicationPK.setDeptId(formData.getApplicationDto().getDeptId());
-//        application.setId(applicationPK);
-//        application.setApplicationType("NW");
-//        application.setApplicationNo(applicationNo);
-//        application.setSubmitDate(new Date());
-//        application.setStatus("N");
-//        application.setPreparedBy("ONLINE");
-//        application.setApplicant(applicant);
-//        application.setContactIdNo(formData.getApplicationDto().getContactIdNo());
-//        application.setContactName(formData.getApplicationDto().getContactName());
-//        application.setContactAddress(formData.getApplicationDto().getContactAddress());
-//        application.setContactTelephone(formData.getApplicationDto().getContactTelephone());
-//        application.setContactEmail(formData.getApplicationDto().getContactEmail());
-//        application.setContactMobile(formData.getApplicationDto().getContactMobile());
-//        application.setUpdUser("system");
-//        application.setUpdDate(new Date());
-//        application.setUpdTime(new java.text.SimpleDateFormat("HH:mm:ss").format(new Date()));
-//        applicationRepository.save(application);
-//
-//        // Save WiringLandDetail entity
-//        saveWiringDetail(formData.getWiringLandDetailDto());
-//
-//        // Save ApplicationReference entity using Application fields
-//        ApplicationReference applicationReference = new ApplicationReference();
-//        ApplicationReferencePK applicationReferencePK = new ApplicationReferencePK();
-//        applicationReferencePK.setApplicationId(application.getId().getApplicationId());
-//        applicationReferencePK.setDeptId(application.getId().getDeptId());
-//        applicationReference.setId(applicationReferencePK);
-//        applicationReference.setApplicationNo(application.getApplicationNo());
-//        applicationReference.setIdNo(formData.getApplicantDto().getIdNo());
-//        applicationReference.setStatus(application.getStatus());
-//        applicationReference.setPostedBy(application.getPreparedBy());
-//        applicationReference.setPostedDate(LocalDate.now());
-//        applicationReference.setPostedTime(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
-//        applicationReferenceRepository.save(applicationReference);
-//
-//        System.out.println("ContactIdNo: " + formData.getApplicationDto().getIdNo());
-//
-//        return applicationNo;
-//    }
-
     public String saveFullApplication(FormDataDto formData) {
         String applicationId = generateApplicationId(formData.getApplicationDto().getDeptId());
         String applicationNo = generateApplicationNo(formData.getApplicationDto().getDeptId());
@@ -128,51 +70,33 @@ public class ApplicationWiringLDService {
 
         Applicant applicant = createApplicant(formData.getApplicantDto());
 
+        // Save Application entity
         Application application = new Application();
         ApplicationPK applicationPK = new ApplicationPK();
         applicationPK.setApplicationId(applicationId);
         applicationPK.setDeptId(formData.getApplicationDto().getDeptId());
         application.setId(applicationPK);
-
-        // >>>>>>>>>>>>>>>>>>>>>  BACKEND-OWNED FIELDS  <<<<<<<<<<<<<<<<<<<<<<
-        application.setApplicationType("NC");                 // was "NW"
-        application.setApplicationSubType("PM");              // new
-        application.setConfirmedBy("online");                 // new
-        application.setStatus("N");                           // keep "N"
-        application.setAddUser("online");                     // new
-        application.setAddDate(new Date());                   // new
-        application.setAddTime(new SimpleDateFormat("HH:mm:ss").format(new Date())); // new
-        application.setIsLoanApp("N");                        // new
-        application.setSamurdhiMember("N");                   // new
-        application.setIsVisitngNeeded("Y");                  // new
-        application.setUpdUser(null);                         // new (force null)
-        application.setUpdDate(null);                         // new (force null)
-        application.setUpdTime(null);                         // new (force null)
-        // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-        // keep the numbers/dates you already had
+        application.setApplicationType("NW");
         application.setApplicationNo(applicationNo);
         application.setSubmitDate(new Date());
-
-        // preparedBy can remain as you wish (spec didn’t ask to change)
+        application.setStatus("N");
         application.setPreparedBy("ONLINE");
-
         application.setApplicant(applicant);
-
-        // contact info copied from DTO is fine
         application.setContactIdNo(formData.getApplicationDto().getContactIdNo());
         application.setContactName(formData.getApplicationDto().getContactName());
         application.setContactAddress(formData.getApplicationDto().getContactAddress());
         application.setContactTelephone(formData.getApplicationDto().getContactTelephone());
         application.setContactEmail(formData.getApplicationDto().getContactEmail());
         application.setContactMobile(formData.getApplicationDto().getContactMobile());
-
+        application.setUpdUser("system");
+        application.setUpdDate(new Date());
+        application.setUpdTime(new java.text.SimpleDateFormat("HH:mm:ss").format(new Date()));
         applicationRepository.save(application);
 
-        // Save WiringLandDetail
+        // Save WiringLandDetail entity
         saveWiringDetail(formData.getWiringLandDetailDto());
 
-        // Save ApplicationReference (no change needed except it will now reflect status "N")
+        // Save ApplicationReference entity using Application fields
         ApplicationReference applicationReference = new ApplicationReference();
         ApplicationReferencePK applicationReferencePK = new ApplicationReferencePK();
         applicationReferencePK.setApplicationId(application.getId().getApplicationId());
@@ -185,6 +109,8 @@ public class ApplicationWiringLDService {
         applicationReference.setPostedDate(LocalDate.now());
         applicationReference.setPostedTime(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
         applicationReferenceRepository.save(applicationReference);
+
+        System.out.println("ContactIdNo: " + formData.getApplicationDto().getIdNo());
 
         return applicationNo;
     }
@@ -267,59 +193,20 @@ public class ApplicationWiringLDService {
     }
 
 
-//    public void saveContactPersonDetail(ApplicationDTO applicationDto, Applicant applicant) {
-//        Application application = new Application();
-//        ApplicationPK applicationPK = new ApplicationPK();
-//
-//        applicationPK.setApplicationId(applicationDto.getApplicationId());
-//        applicationPK.setDeptId(applicationDto.getDeptId());
-//        application.setApplicationType("NW");
-//        application.setApplicationNo(applicationDto.getApplicationNo());
-//        application.setSubmitDate(new Date());
-//        application.setStatus("N");
-//        application.setPreparedBy("ONLINE");
-//        application.setApplicant(applicant);
-//
-//        application.setId(applicationPK);
-//        application.setContactIdNo(applicationDto.getContactIdNo());
-//        application.setContactName(applicationDto.getContactName());
-//        application.setContactAddress(applicationDto.getContactAddress());
-//        application.setContactTelephone(applicationDto.getContactTelephone());
-//        application.setContactEmail(applicationDto.getContactEmail());
-//        application.setContactMobile(applicationDto.getContactMobile());
-//
-//        applicationRepository.save(application);
-//
-//    }
-
     public void saveContactPersonDetail(ApplicationDTO applicationDto, Applicant applicant) {
         Application application = new Application();
         ApplicationPK applicationPK = new ApplicationPK();
+
         applicationPK.setApplicationId(applicationDto.getApplicationId());
         applicationPK.setDeptId(applicationDto.getDeptId());
-        application.setId(applicationPK);
-
-        // >>> backend-owned values
-        application.setApplicationType("NC");
-        application.setApplicationSubType("PM");
-        application.setConfirmedBy("online");
-        application.setStatus("N");
-        application.setAddUser("online");
-        application.setAddDate(new Date());
-        application.setAddTime(new SimpleDateFormat("HH:mm:ss").format(new Date()));
-        application.setIsLoanApp("N");
-        application.setSamurdhiMember("N");
-        application.setIsVisitngNeeded("Y");
-        application.setUpdUser(null);
-        application.setUpdDate(null);
-        application.setUpdTime(null);
-        // <<<
-
+        application.setApplicationType("NW");
         application.setApplicationNo(applicationDto.getApplicationNo());
         application.setSubmitDate(new Date());
+        application.setStatus("N");
         application.setPreparedBy("ONLINE");
         application.setApplicant(applicant);
 
+        application.setId(applicationPK);
         application.setContactIdNo(applicationDto.getContactIdNo());
         application.setContactName(applicationDto.getContactName());
         application.setContactAddress(applicationDto.getContactAddress());
@@ -328,8 +215,8 @@ public class ApplicationWiringLDService {
         application.setContactMobile(applicationDto.getContactMobile());
 
         applicationRepository.save(application);
-    }
 
+    }
 
     public void saveWiringDetail(WiringLandDetailDto wiringLandDetailDto) {
         WiringLandDetail wiringLandDetail = new WiringLandDetail();
@@ -589,5 +476,8 @@ public class ApplicationWiringLDService {
 //
 //        applicationReferenceRepository.save(applicationReference);
 //    }
+
+
+
 
 }
