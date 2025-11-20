@@ -8,8 +8,9 @@ import org.hibernate.annotations.ColumnDefault;
 @Getter
 @Setter
 @Entity
-@Table(name = "SPSUSERS")
+@Table(name = "SPSUSERS", schema = "SPSNEW")
 public class User {
+
 //    @Id
 //    @GeneratedValue(strategy = GenerationType.AUTO)
 //    @Column(name = "ID", nullable = false)
@@ -22,6 +23,7 @@ public class User {
             allocationSize = 1                // Must match DB sequence INCREMENT BY
     )
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spsusers_seq")
+
     @Column(name = "ID", nullable = false)
     private Long id;
 
