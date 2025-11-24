@@ -27,12 +27,12 @@ public class AppointmentResponseDto {
 //        this.address = address;
 //    }
 
-    public AppointmentResponseDto(String deptId, String applicationId, String appointmentId,
+    public AppointmentResponseDto(String appointmentId, String deptId, String applicationId,
                                   String date, String session, String description, String phone,
                                   String name, String address, Double latitude, Double longitude) {
+        this.appointmentId = appointmentId;
         this.deptId = deptId;
         this.applicationId = applicationId;
-        this.appointmentId = appointmentId;
         this.date = date;
         this.session = session;
         this.description = description;

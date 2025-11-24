@@ -83,10 +83,10 @@ public class SchedulerController {
     }
 
 
-    @PutMapping("/appointments/{appointmentId}/{deptId}")
+    @PutMapping("/appointments")
     public ResponseEntity<String> updateAppointment(
-            @PathVariable String appointmentId,
-            @PathVariable String deptId,
+            @RequestParam String appointmentId,
+            @RequestParam String deptId,
             @RequestBody AppointmentRequestDto dto) {
         try {
             System.out.println("Received update request: " + dto);
