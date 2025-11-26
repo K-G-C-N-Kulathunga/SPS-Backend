@@ -38,7 +38,7 @@ public interface LoginRepository extends JpaRepository<Sauserm, String> {
     List<MainMenuDTO> getMainMenusForUser(@Param("userId") String userId);
 
     // fetches tasks for the given menu code and only for the logged-in user's level (userLevel)
-    @Query("SELECT NEW com.it.sps.dto.TaskDTO(tuc.menuCode, t.activityCode, t.activity) " +
+    @Query("SELECT NEW com.it.sps.dto.TaskDTO(tuc.menuCode, t.activityCode, t.activity, t.page) " +
             "FROM Sauserm s " +
             "JOIN TaskUserCategory tuc ON TRIM(UPPER(s.userLevel)) = TRIM(UPPER(tuc.userRoleCode)) " +
             "JOIN Task t ON TRIM(UPPER(tuc.activityCode)) = TRIM(UPPER(t.activityCode)) " +
@@ -52,7 +52,7 @@ public interface LoginRepository extends JpaRepository<Sauserm, String> {
     List<MainMenuDTO> getAllMainMenus();
 
     // Fallback: return all tasks for a menu regardless of user role
-    @Query("SELECT NEW com.it.sps.dto.TaskDTO(t.menuCode, t.activityCode, t.activity) " +
+    @Query("SELECT NEW com.it.sps.dto.TaskDTO(t.menuCode, t.activityCode, t.activity, t.page) " +
             "FROM Task t WHERE t.menuCode = :menuCode ORDER BY t.orderKey")
     List<TaskDTO> getTasksForMenu(@Param("menuCode") String menuCode);
 
@@ -80,3 +80,7 @@ public interface LoginRepository extends JpaRepository<Sauserm, String> {
 //    )
 //    List<MainMenuDTO> getMainMenusForUser(@Param("userId") String userId);
 }
+
+
+
+
