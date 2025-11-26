@@ -17,6 +17,8 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 import java.time.LocalDate;
 import java.util.*;
 
@@ -170,27 +172,74 @@ public class AppointmentService {
 //        return result;
 //    }
 
+//    public List<AppointmentResponseDto> getAppointmentsByDept(String deptId) {
+//        List<Object[]> rows = spestedyRepository.findAppointmentsByDept(deptId);
+//        List<AppointmentResponseDto> result = new ArrayList<>();
+//
+//        for (Object[] row : rows) {
+//            AppointmentResponseDto dto = new AppointmentResponseDto(
+//                    row[0] != null ? row[0].toString() : null,
+//                    row[1] != null ? row[1].toString() : null,
+//                    row[2] != null ? row[2].toString() : null,
+//                    row[3] != null ? row[3].toString() : null,
+//                    row[4] != null ? row[4].toString() : null,
+//                    row[5] != null ? row[5].toString() : null,
+//                    row[6] != null ? row[6].toString() : null,
+//                    row[7] != null ? row[7].toString() : null,
+//                    row[8] != null ? row[8].toString() : null
+//            );
+//            result.add(dto);
+//        }
+//
+//        return result;
+//    }
+
+
+
     public List<AppointmentResponseDto> getAppointmentsByDept(String deptId) {
         List<Object[]> rows = spestedyRepository.findAppointmentsByDept(deptId);
         List<AppointmentResponseDto> result = new ArrayList<>();
 
         for (Object[] row : rows) {
+            Double lat = null;
+            Double lng = null;
+
+            if (row[9] != null) {
+                if (row[9] instanceof BigDecimal) {
+                    lat = ((BigDecimal) row[9]).doubleValue();
+                } else {
+                    lat = Double.valueOf(row[9].toString());
+                }
+            }
+
+            if (row[10] != null) {
+                if (row[10] instanceof BigDecimal) {
+                    lng = ((BigDecimal) row[10]).doubleValue();
+                } else {
+                    lng = Double.valueOf(row[10].toString());
+                }
+            }
+
             AppointmentResponseDto dto = new AppointmentResponseDto(
-                    row[0] != null ? row[0].toString() : null,
-                    row[1] != null ? row[1].toString() : null,
-                    row[2] != null ? row[2].toString() : null,
-                    row[3] != null ? row[3].toString() : null,
-                    row[4] != null ? row[4].toString() : null,
-                    row[5] != null ? row[5].toString() : null,
-                    row[6] != null ? row[6].toString() : null,
-                    row[7] != null ? row[7].toString() : null,
-                    row[8] != null ? row[8].toString() : null
+                    row[0] != null ? row[0].toString() : null, // appointmentId
+                    row[1] != null ? row[1].toString() : null, // deptId
+                    row[2] != null ? row[2].toString() : null, // applicationId
+                    row[3] != null ? row[3].toString() : null, // appointmentDate
+                    row[4] != null ? row[4].toString() : null, // timeSession
+                    row[5] != null ? row[5].toString() : null, // description
+                    row[6] != null ? row[6].toString() : null, // phone
+                    row[7] != null ? row[7].toString() : null, // name
+                    row[8] != null ? row[8].toString() : null, // address
+                    lat,
+                    lng
             );
+
             result.add(dto);
         }
 
         return result;
     }
+
 
 
     public void updateAppointment(String appointmentId, String deptId, AppointmentRequestDto dto) {
