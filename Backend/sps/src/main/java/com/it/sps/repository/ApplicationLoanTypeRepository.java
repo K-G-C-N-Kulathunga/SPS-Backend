@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ApplicationLoanTypeRepository extends JpaRepository<SpLoanSM, String> {
 
-    @Query("SELECT new com.it.sps.dto.ApplicationLoanTypeDropDownDTO(a.loanCode)" +
+    @Query("SELECT new com.it.sps.dto.ApplicationLoanTypeDropDownDTO(a.loanCode, a.loanName)" +
             "FROM SpLoanSM a " +
             "WHERE a.status = '1'" +
             "ORDER BY a.sortKey DESC")

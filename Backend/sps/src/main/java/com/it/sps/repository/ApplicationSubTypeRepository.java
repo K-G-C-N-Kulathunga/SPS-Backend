@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ApplicationSubTypeRepository extends JpaRepository<ApplicationSubType, String> {
 
-    @Query("SELECT new com.it.sps.dto.ApplicationSubTypeDropDownDTO(a.appSubTypeCode) " +
+    @Query("SELECT new com.it.sps.dto.ApplicationSubTypeDropDownDTO(a.appSubTypeCode, a.appSubTypeName) " +
             "FROM ApplicationSubType a " +
             "WHERE a.appTypeCode = :type " +
             "AND a.status = 1 " +

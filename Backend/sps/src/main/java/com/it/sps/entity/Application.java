@@ -149,6 +149,12 @@ public class Application implements Serializable {
 	@Column(name="UPD_USER")
 	private String updUser;
 
+    @Column(name="LONGITUDE")
+    private BigDecimal longitude;
+
+    @Column(name="LATITUDE")
+    private BigDecimal latitude;
+
 	//bi-directional many-to-one association to Applicant
 	@ManyToOne
 	@JoinColumn(name="ID_NO")
@@ -508,5 +514,21 @@ public class Application implements Serializable {
 	public void setApplicant(Applicant applicant) {
 		this.applicant = applicant;
 	}
+
+    public BigDecimal getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(BigDecimal longitude) {
+        this.longitude = longitude;
+    }
+
+    public BigDecimal getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(BigDecimal latitude) {
+        this.latitude = latitude;
+    }
 
 }

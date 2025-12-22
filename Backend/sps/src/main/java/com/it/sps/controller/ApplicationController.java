@@ -22,11 +22,11 @@ import java.util.Optional;
 @RequestMapping("/api/application")
 public class ApplicationController {
 
-	@Autowired
+    @Autowired
     private ApplicationWiringLDService applicationWiringLDService;
-	@Autowired
+    @Autowired
     private ApplicationService applicationService;
-    
+
     //private ApplicationWiringLDService applicationService;
 
     /*public ApplicationController(ApplicationWiringLDService applicationService) {
@@ -61,7 +61,7 @@ public class ApplicationController {
         String newAppId = applicationWiringLDService.createNewApplicationId(deptId);
         return ResponseEntity.ok(newAppId);
     }
-    
+
     @GetMapping("/all")
     public List<String> getAllApplicationNos() {
         return applicationService.getAllApplicationNos();

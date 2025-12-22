@@ -2,8 +2,12 @@ package com.it.sps.controller;
 
 import com.it.sps.dto.ApplicationSubTypeDropDownDTO;
 import com.it.sps.dto.ApplicationLoanTypeDropDownDTO;
+import com.it.sps.dto.ApplicationTariffCategoryDropDownDTO;
+import com.it.sps.dto.ApplicationTariffCodeDropDownDTO;
 import com.it.sps.repository.ApplicationSubTypeRepository;
 import com.it.sps.repository.ApplicationLoanTypeRepository;
+import com.it.sps.repository.TariffRepository;
+import com.it.sps.repository.TariffCategoryRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,11 +20,17 @@ public class MasterDataController {
 
     private final ApplicationSubTypeRepository applicationSubTypeRepository;
     private final ApplicationLoanTypeRepository applicationLoanTypeRepository;
+    private final TariffRepository tariffRepository;
+    private final TariffCategoryRepository tariffCategoryRepository;
 
     public MasterDataController(ApplicationSubTypeRepository applicationSubTypeRepository,
-                                ApplicationLoanTypeRepository applicationLoanTypeRepository) {
+                                ApplicationLoanTypeRepository applicationLoanTypeRepository,
+                                TariffRepository tariffRepository,
+                                TariffCategoryRepository tariffCategoryRepository) {
         this.applicationSubTypeRepository = applicationSubTypeRepository;
         this.applicationLoanTypeRepository = applicationLoanTypeRepository;
+        this.tariffRepository = tariffRepository;
+        this.tariffCategoryRepository = tariffCategoryRepository;
     }
 
     // ✅ DROPDOWN API ONLY
@@ -67,6 +77,44 @@ public class MasterDataController {
             e.printStackTrace();
             return ResponseEntity.status(500)
                     .body("Internal Server Error while fetching loantypes: " + e.getMessage());
+        }
+    }
+
+    //Dropdown API for TariffCodes
+    @GetMapping("/tariffcodes")
+    public ResponseEntity<?> getTariffCodeDropDown() {
+        try {
+            List<ApplicationTariffCodeDropDownDTO> tariffCodes = tariffRepository.findActiveTariffCode();
+
+            if (tariffCodes == null || tariffCodes.isEmpty()) {
+                return ResponseEntity.status(404)
+                        .body("No active Tariff code found.");
+            }
+
+            return ResponseEntity.ok(tariffCodes);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500)
+                    .body("Internal Server Error while fetching tariffCodes: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/tariffCategory")
+    public ResponseEntity<?> getTariffCategoryDropDown() {
+        try{
+            List<ApplicationTariffCategoryDropDownDTO> tariffCategory = tariffCategoryRepository.findActiveTariffCategory();
+
+            if (tariffCategory == null || tariffCategory.isEmpty()) {
+                return ResponseEntity.status(404)
+                        .body("No active Tariff Category found.");
+            }
+
+            return ResponseEntity.ok(tariffCategory);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500)
+                    .body("Internal Server Error while fetching Tariff Category: " + e.getMessage());
         }
     }
 }

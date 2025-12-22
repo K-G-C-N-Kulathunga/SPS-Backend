@@ -7,7 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ApplicationLoanTypeDropDownDTO {
-    private String loanCode;
-    private String loanName;
+public class ApplicationTariffCodeDropDownDTO {
+    private String tariffCode;
 }

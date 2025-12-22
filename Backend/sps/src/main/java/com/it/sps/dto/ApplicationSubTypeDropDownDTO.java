@@ -9,4 +9,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ApplicationSubTypeDropDownDTO {
     private String appSubTypeCode;
+    private String appSubTypeName;
 }
