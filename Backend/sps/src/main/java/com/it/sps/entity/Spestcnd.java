@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
-@Table(name = "SPESTCND", schema = "PRODMISS")
+@Table(name = "SPESTCND")
 public class Spestcnd {
     @EmbeddedId
     private SpestcndId id;

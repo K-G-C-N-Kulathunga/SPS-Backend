@@ -11,19 +11,9 @@ import org.hibernate.annotations.ColumnDefault;
 @Table(name = "SPSUSERS", schema = "SPSNEW")
 public class User {
 
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
-//    @Column(name = "ID", nullable = false)
-//    private Long id;
-
     @Id
-    @SequenceGenerator(
-            name = "spsusers_seq",            // Hibernate generator name
-            sequenceName = "SPSUSERS_SEQ",    // Your Oracle sequence name
-            allocationSize = 1                // Must match DB sequence INCREMENT BY
-    )
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spsusers_seq")
-
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SPSUSERS_SEQ")
+    @SequenceGenerator(name = "SPSUSERS_SEQ", sequenceName = "SPSUSERS_SEQ", allocationSize = 1)
     @Column(name = "ID", nullable = false)
     private Long id;
 

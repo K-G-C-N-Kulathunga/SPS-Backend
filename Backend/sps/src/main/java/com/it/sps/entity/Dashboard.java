@@ -4,11 +4,14 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -62,7 +65,8 @@ public class Dashboard {
     private String tariffCode;
 
     @Column(name = "APP_SUBMITTED_DATE", nullable = false)
-    private Instant appSubmittedDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date appSubmittedDate;
 
     @Column(name = "APP_SUBMITTED_BY", nullable = false, length = 12)
     private String appSubmittedBy;
@@ -71,7 +75,8 @@ public class Dashboard {
     private String status;
 
     @Column(name = "STATUS_CHANGED_DATE", nullable = false)
-    private Instant statusChangedDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date statusChangedDate;
 
     @Column(name = "STATUS_CHANGED_BY", nullable = false, length = 12)
     private String statusChangedBy;
