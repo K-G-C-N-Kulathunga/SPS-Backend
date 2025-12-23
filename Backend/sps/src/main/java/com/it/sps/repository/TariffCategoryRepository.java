@@ -8,7 +8,7 @@ import com.it.sps.entity.TariffCategory;
 
 public interface TariffCategoryRepository extends JpaRepository<TariffCategory, String> {
 
-    @Query("Select new com.it.sps.dto.ApplicationTariffCategoryDropDownDTO(a.tariffName) " +
+    @Query("Select new com.it.sps.dto.ApplicationTariffCategoryDropDownDTO(a.tariffName,a.tariffCatCode) " +
             "FROM TariffCategory a " +
             "Where a.isSmcActive = '1'")
     List<ApplicationTariffCategoryDropDownDTO> findActiveTariffCategory();

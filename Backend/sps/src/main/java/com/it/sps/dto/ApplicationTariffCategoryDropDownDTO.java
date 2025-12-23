@@ -9,4 +9,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ApplicationTariffCategoryDropDownDTO {
     private String TariffCatName;
+    private String TariffCatCode;
 }

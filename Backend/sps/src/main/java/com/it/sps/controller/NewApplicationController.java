@@ -47,21 +47,20 @@ public class NewApplicationController {
         }
     }
 
-    @PutMapping(value = "/newapplication/{refNo}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateApplication(
-            @PathVariable String refNo,
-            @RequestPart("formData") ApplicationFormRequestDTO formData, // Ensure this DTO class matches your existing POST DTO
+
+            @RequestParam("refNo") String refNo,
+
+            @RequestPart("formData") ApplicationFormRequestDTO formData,
             @RequestPart(value = "idCopy", required = false) MultipartFile idCopy,
             @RequestPart(value = "ownershipCertificate", required = false) MultipartFile ownershipCertificate,
             @RequestPart(value = "gramaNiladhariCertificate", required = false) MultipartFile gramaNiladhariCertificate,
             @RequestPart(value = "threephChartedEngineerCertificate", required = false) MultipartFile threephChartedEngineerCertificate
     ) {
         try {
-            // Log the update attempt
             System.out.println("Update request received for RefNo: " + refNo);
 
-            // Call your Service to handle the update logic
-            // You likely need to create this method in your Service class
             applicationWiringLDBackService.updateExistingApplication(
                     refNo,
                     formData,
@@ -71,11 +70,14 @@ public class NewApplicationController {
                     threephChartedEngineerCertificate
             );
 
-            return ResponseEntity.ok().body("{\"status\": \"success\", \"message\": \"Application updated successfully\"}");
+            return ResponseEntity.ok().body(Map.of(
+                    "status", "success",
+                    "message", "Application updated successfully"
+            ));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("{\"error\": \"Update failed: " + e.getMessage() + "\"}");
+                    .body(Map.of("error", "Update failed: " + e.getMessage()));
         }
     }
 }

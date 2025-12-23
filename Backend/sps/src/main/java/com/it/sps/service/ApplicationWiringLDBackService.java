@@ -201,6 +201,18 @@ public class ApplicationWiringLDBackService {
             FormApplicationDTO appDto = formData.getApplicationFormRequestDto();
             FormWiringLandDetailDTO wiringDto = formData.getFormWiringLandDetailDto();
 
+            // --- DEBUG LOGS: CHECK THESE IN YOUR CONSOLE ---
+            System.out.println("=== DEBUG: INCOMING WIRING DATA ===");
+            if (wiringDto != null) {
+                System.out.println("Received Tariff Cat: '" + wiringDto.getTariffCatCode() + "'");
+                System.out.println("Received Tariff Code: '" + wiringDto.getTariffCode() + "'");
+                System.out.println("Received Customer Cat: '" + wiringDto.getCustomerCategory() + "'");
+                System.out.println("Received Customer Type: '" + wiringDto.getCustomerType() + "'");
+            } else {
+                System.err.println("!!! wiringDto IS NULL (Check JSON Key 'formWiringLandDetailDto') !!!");
+            }
+            // -----------------------------------------------
+
             // 1. UPDATE APPLICATION ENTITY
             ApplicationPK appPk = new ApplicationPK();
             appPk.setApplicationId(refNo);
