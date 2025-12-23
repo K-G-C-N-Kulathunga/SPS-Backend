@@ -10,10 +10,26 @@ public class AppointmentResponseDto {
     private String phone;
     private String name;
     private String address;
+    private Double latitude;
+    private Double longitude;
+
+//    public AppointmentResponseDto(String appointmentId, String deptId, String applicationId,
+//                                  String date, String session, String description,
+//                                  String phone, String name, String address) {
+//        this.appointmentId = appointmentId;
+//        this.deptId = deptId;
+//        this.applicationId = applicationId;
+//        this.date = date;
+//        this.session = session;
+//        this.description = description;
+//        this.phone = phone;
+//        this.name = name;
+//        this.address = address;
+//    }
 
     public AppointmentResponseDto(String appointmentId, String deptId, String applicationId,
-                                  String date, String session, String description,
-                                  String phone, String name, String address) {
+                                  String date, String session, String description, String phone,
+                                  String name, String address, Double latitude, Double longitude) {
         this.appointmentId = appointmentId;
         this.deptId = deptId;
         this.applicationId = applicationId;
@@ -23,6 +39,8 @@ public class AppointmentResponseDto {
         this.phone = phone;
         this.name = name;
         this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     // Getters
@@ -35,4 +53,12 @@ public class AppointmentResponseDto {
     public String getPhone() { return phone; }
     public String getName() { return name; }
     public String getAddress() { return address; }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
 }

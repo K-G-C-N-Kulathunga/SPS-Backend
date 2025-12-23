@@ -24,36 +24,19 @@ public class ApplicationConnectionDetailsService {
         this.wiringLandDetailRepository = wiringLandDetailRepository;
     }
 
-    // ✅ Get list of all Application Numbers
-//    public List<String> getAllApplicationNumbers() {
-//        return applicationRepository.findAllApplications()
-//                .stream()
-//                .map(Application::getApplicationNo)
-//                .collect(Collectors.toList());
-//    }
-    public List<ApplicationDropdownDto> getAllApplicationsWithDept() {
-        List<Application> apps = applicationRepository.findAllApplications();
-        if (apps == null) {
-            System.out.println("DEBUG: No applications found!");
-            return List.of();
-        }
+    // ✅ Fetch applications filtered by deptId, applicationType, and status
+    public List<ApplicationDropdownDto> getApplicationsByDeptTypeStatus(String deptId, String applicationType, String status) {
+        List<Application> apps = applicationRepository.findApplicationsByDeptTypeStatus(deptId, applicationType, status);
+
         return apps.stream()
                 .map(app -> {
-                    System.out.println("DEBUG: Processing applicationNo=" + app.getApplicationNo());
                     String applicationId = app.getApplicationNo().replace("/ENC/", "/ANC/");
-                    WiringLandDetail wiring = wiringLandDetailRepository.findFirstByApplicationIdNative(applicationId);
-                    if (wiring == null) {
-                        System.out.println("DEBUG: No wiring found for applicationId=" + applicationId);
-                    } else if (wiring.getId() == null) {
-                        System.out.println("DEBUG: wiring.getId() is null for applicationId=" + applicationId);
-                    }
-                    String deptId = wiring != null && wiring.getId() != null ? wiring.getId().getDeptId() : null;
-                    return new ApplicationDropdownDto(app.getApplicationNo(), deptId);
+                    WiringLandDetail wiring = wiringLandDetailRepository.findByIdApplicationIdAndIdDeptId(applicationId, deptId);
+                    String dept = wiring != null && wiring.getId() != null ? wiring.getId().getDeptId() : null;
+                    return new ApplicationDropdownDto(app.getApplicationNo(), dept);
                 })
                 .collect(Collectors.toList());
     }
-
-
 
     // ✅ Get details of a single application
     public ApplicationConnectionDetailsDto getApplicationDetails(String applicationNo, String deptId) {
@@ -89,5 +72,4 @@ public class ApplicationConnectionDetailsService {
                 wiring.getTariffCode()
         );
     }
-
 }

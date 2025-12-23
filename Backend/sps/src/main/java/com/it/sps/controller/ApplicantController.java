@@ -25,7 +25,7 @@ public class ApplicantController {
         this.applicantService = applicantService;
     }*/
 
-    @GetMapping("/findById/{idNo}")
+    @GetMapping("/{idNo}")
     public ResponseEntity<ApplicantDTO> getApplicantById(@PathVariable String idNo) {
         ApplicantDTO applicantDto = applicantService.findApplicantDTOByIdNo(idNo);
 
