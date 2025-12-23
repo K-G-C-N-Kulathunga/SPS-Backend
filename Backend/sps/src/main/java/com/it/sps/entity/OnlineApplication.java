@@ -46,10 +46,10 @@ public class OnlineApplication {
     @Column(name = "POSTAL_CODE", length = 5)
     private String postalCode;
 
-    @Column(name = "EMAIL", nullable = false, length = 30)
+    @Column(name = "EMAIL", nullable = true, length = 30)
     private String email;
 
-    @Column(name = "TELEPHONE", nullable = false, length = 10)
+    @Column(name = "TELEPHONE", length = 10)
     private String telephone;
 
     @Column(name = "MOBILE", nullable = false, length = 10)
@@ -64,7 +64,7 @@ public class OnlineApplication {
     @Column(name = "CONTACT_ADDRESS", nullable = false, length = 150)
     private String contactAddress;
 
-    @Column(name = "CONTACT_TELEPHONE", nullable = false, length = 10)
+    @Column(name = "CONTACT_TELEPHONE", nullable = true, length = 10)
     private String contactTelephone;
 
     @Column(name = "CONTACT_MOBILE", nullable = false, length = 10)
@@ -85,10 +85,10 @@ public class OnlineApplication {
     @Column(name = "SERVICE_POSTAL_CODE", length = 5)
     private String servicePostalCode;
 
-    @Column(name = "ASSESSMENT_NO", length = 6)
+    @Column(name = "ASSESSMENT_NO", nullable = true, length = 6)
     private String assessmentNo;
 
-    @Column(name = "NEIGHBOURS_ACC_NO", length = 10)
+    @Column(name = "NEIGHBOURS_ACC_NO", nullable = true, length = 10)
     private String neighboursAccNo;
 
     @Column(name = "DEPT_ID", nullable = false, length = 6)
@@ -160,5 +160,10 @@ public class OnlineApplication {
     @Column(name = "LONGITUDE")
     private Double longitude;
 
+    @Column(name="APPLICATION_NO")
+    private String applicationNo;
+
+    @Column(name = "STATUS", length = 2)
+    private String status;
 
 }

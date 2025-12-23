@@ -7,6 +7,11 @@ import com.it.sps.service.OnlineApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
+
+
 import com.it.sps.entity.Gldeptin;
 import com.it.sps.repository.GldeptinRepository;
 
@@ -17,21 +22,54 @@ import java.util.Date;
 @Service
 public class OnlineApplicationServiceImpl implements OnlineApplicationService {
 
+//    @Autowired
+//    private OnlineApplicationRepository onlineApplicationRepository;
+//
+//
+//    @Autowired
+//    private GldeptinRepository gldeptinRepository;
+//
+//
+//    @Override
+//    public OnlineApplication createApplication(OnlineApplication application) {
+//        String tempId = generateTempId(application.getMobile());
+//        application.setTempId(tempId);
+//        application.setApplicationDate(new Date());
+//
+//        return onlineApplicationRepository.save(application);
+//    }
+
+    private static final Logger log = LoggerFactory.getLogger(OnlineApplicationServiceImpl.class);
+
     @Autowired
     private OnlineApplicationRepository onlineApplicationRepository;
-
 
     @Autowired
     private GldeptinRepository gldeptinRepository;
 
+    @Autowired
+    private SmsService smsService; // <-- add this
 
     @Override
+    @Transactional
     public OnlineApplication createApplication(OnlineApplication application) {
         String tempId = generateTempId(application.getMobile());
         application.setTempId(tempId);
         application.setApplicationDate(new Date());
 
-        return onlineApplicationRepository.save(application);
+        application.setStatus("N");
+
+        OnlineApplication saved = onlineApplicationRepository.save(application);
+
+        // fire-and-forget SMS
+        try {
+            smsService.sendTempIdSms(saved.getMobile(), saved.getTempId());
+        } catch (Exception e) {
+            // already handled inside service, but double safety
+            log.warn("Non-fatal: SMS send attempt failed for TEMP_ID={}", saved.getTempId());
+        }
+
+        return saved;
     }
 
     public String generateTempId(String mobile) {
