@@ -3,14 +3,8 @@ package com.it.sps.controller;
 import com.it.sps.dto.ApplicationConnectionDetailsDto;
 import com.it.sps.dto.ApplicationDropdownDto;
 import com.it.sps.dto.ServiceEstimateDto;
-import com.it.sps.dto.SpdppolmDTO;
-import com.it.sps.dto.SpstrutmDTO;
-import com.it.sps.dto.SpstaymtDTO;
 import com.it.sps.service.ApplicationConnectionDetailsService;
 import com.it.sps.service.ServiceEstimateService;
-import com.it.sps.service.SpdppolmService;
-import com.it.sps.service.SpstrutmService;
-import com.it.sps.service.SpstaymtService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,45 +17,52 @@ public class ApplicationConnectionDetailsController {
 
     private final ApplicationConnectionDetailsService service;
     private final ServiceEstimateService serviceEstimateService;
-    private final SpdppolmService spdppolmService;
-    private final SpstrutmService spstrutmService;
-    private final SpstaymtService spstaymtService;
 
     public ApplicationConnectionDetailsController(ApplicationConnectionDetailsService service,
-            ServiceEstimateService serviceEstimateService,
-            SpdppolmService spdppolmService,
-            SpstrutmService spstrutmService,
-            SpstaymtService spstaymtService) {
+                                                  ServiceEstimateService serviceEstimateService) {
         this.service = service;
         this.serviceEstimateService = serviceEstimateService;
-        this.spdppolmService = spdppolmService;
-        this.spstrutmService = spstrutmService;
-        this.spstaymtService = spstaymtService;
     }
 
-    // ========================
-    // Application Connection Endpoints
-    // ========================
-
+    // GET: All application numbers for dropdown
     @GetMapping("/all")
-    public ResponseEntity<List<ApplicationDropdownDto>> getAllApplicationsWithDept(
-            @RequestParam String deptId,
-            @RequestParam String applicationType,
-            @RequestParam String status) {
+    public ResponseEntity<List<ApplicationDropdownDto>> getAllApplicationsWithDept() {
         try {
-            List<ApplicationDropdownDto> list = service.getApplicationsByDeptTypeStatus(deptId, applicationType,
-                    status);
-            return ResponseEntity.ok(list != null ? list : List.of());
+            List<ApplicationDropdownDto> list = service.getAllApplicationsWithDept();
+            if (list == null || list.isEmpty()) {
+                return ResponseEntity.ok(List.of());
+            }
+            return ResponseEntity.ok(list);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body(List.of());
         }
     }
 
+    // Simple test
+    @GetMapping("/test")
+    public String testEndpoint(@RequestParam String deptId) {
+        return "It works! deptId=" + deptId;
+    }
+
+    // GET: Specific application details
+//    @GetMapping("/details")
+//    public ResponseEntity<?> getApplicationDetails(@RequestParam String applicationNo,
+//                                                   @RequestParam String deptId) {
+//        System.out.println("Hit endpoint: applicationNo=" + applicationNo + ", deptId=" + deptId);
+//        ApplicationConnectionDetailsDto dto = service.getApplicationDetails(applicationNo, deptId);
+//        if (dto == null) {
+//            return ResponseEntity.status(404)
+//                    .body("No application found for applicationNo=" + applicationNo + " and deptId=" + deptId);
+//        }
+//        return ResponseEntity.ok(dto);
+//    }
+
     @GetMapping("/details")
     public ResponseEntity<?> getApplicationDetails(@RequestParam String applicationNo,
-            @RequestParam String deptId) {
+                                                   @RequestParam String deptId) {
         try {
+            System.out.println("Hit endpoint: applicationNo=" + applicationNo + ", deptId=" + deptId);
             ApplicationConnectionDetailsDto dto = service.getApplicationDetails(applicationNo, deptId);
             if (dto == null) {
                 return ResponseEntity.status(404)
@@ -69,20 +70,20 @@ public class ApplicationConnectionDetailsController {
             }
             return ResponseEntity.ok(dto);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); // full stack trace
             return ResponseEntity.status(500).body(e.getMessage());
         }
     }
 
-    // ========================
-    // Service Estimate Endpoints
-    // ========================
+
+    // === Service Estimate (migrated from ServiceEstimateController) ===
 
     @PostMapping("/service-estimate/save")
     public ResponseEntity<ServiceEstimateService.ServiceEstimateResult> saveServiceEstimate(
             @RequestBody ServiceEstimateDto dto) {
         try {
-            return ResponseEntity.ok(serviceEstimateService.saveServiceEstimate(dto));
+            ServiceEstimateService.ServiceEstimateResult result = serviceEstimateService.saveServiceEstimate(dto);
+            return ResponseEntity.ok(result);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
@@ -90,62 +91,18 @@ public class ApplicationConnectionDetailsController {
     }
 
     @PostMapping("/service-estimate/save-from-frontend")
-    public ResponseEntity<?> saveFromFrontend(
+    public ResponseEntity<ServiceEstimateService.ServiceEstimateResult> saveFromFrontend(
             @RequestBody Map<String, Object> frontendData) {
         try {
-            return ResponseEntity.ok(serviceEstimateService.saveFromFrontendData(frontendData));
+            System.out.println("DEBUG: Unified Controller - Received request with data: " + frontendData);
+            ServiceEstimateService.ServiceEstimateResult result =
+                    serviceEstimateService.saveFromFrontendData(frontendData);
+            System.out.println("DEBUG: Unified Controller - Successfully processed request");
+            return ResponseEntity.ok(result);
         } catch (Exception e) {
+            System.out.println("DEBUG: Unified Controller - Exception occurred: " + e.getMessage());
             e.printStackTrace();
-            return ResponseEntity.badRequest().body(Map.of(
-                    "error", "Failed to save service estimate data",
-                    "message", e.getMessage()));
-        }
-    }
-
-    // ========================
-    // SPDPPOLM Endpoints
-    // ========================
-
-    @GetMapping("/spdppolm")
-    public ResponseEntity<List<SpdppolmDTO>> getMatCdByDeptId(@RequestParam String deptId) {
-        try {
-            List<SpdppolmDTO> list = spdppolmService.getMatCdByDeptId(deptId);
-            return ResponseEntity.ok(list != null ? list : List.of());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(List.of());
-        }
-    }
-
-    // ========================
-    // SPSTRUTM Endpoints
-    // ========================
-
-    @GetMapping("/spstrutm")
-    public ResponseEntity<List<SpstrutmDTO>> getMatCdFromSpstrutm() {
-        try {
-            // Hardcoded DEPT_ID
-            String deptId = "452.00";
-            List<SpstrutmDTO> list = spstrutmService.getMatCdByDeptId(deptId);
-            return ResponseEntity.ok(list != null ? list : List.of());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(List.of());
-        }
-    }
-
-    // ========================
-    // SPSTAYMT Endpoints
-    // ========================
-
-    @GetMapping("/spstaymt")
-    public ResponseEntity<List<SpstaymtDTO>> getMatCdFromSpstaymt(@RequestParam String deptId) {
-        try {
-            List<SpstaymtDTO> list = spstaymtService.getMatCdByDeptId(deptId);
-            return ResponseEntity.ok(list != null ? list : List.of());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(List.of());
+            return ResponseEntity.badRequest().build();
         }
     }
 }
