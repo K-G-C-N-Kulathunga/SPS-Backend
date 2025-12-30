@@ -24,7 +24,8 @@ public class NewApplicationController {
             @RequestPart(value = "idCopy", required = false) MultipartFile idCopy,
             @RequestPart(value = "ownershipCertificate", required = false) MultipartFile ownershipCertificate,
             @RequestPart(value = "gramaNiladhariCertificate", required = false) MultipartFile gramaNiladhariCertificate,
-            @RequestPart(value = "threephChartedEngineerCertificate", required = false) MultipartFile engineerCertificate
+            @RequestPart(value = "threephChartedEngineerCertificate", required = false) MultipartFile engineerCertificate,
+            @RequestParam(value = "tempId", required = false) String tempId
     ) {
         try {
             // FIX: Pass ALL 5 arguments to the service
@@ -33,7 +34,8 @@ public class NewApplicationController {
                     idCopy,
                     ownershipCertificate,
                     gramaNiladhariCertificate,
-                    engineerCertificate
+                    engineerCertificate,
+                    tempId
             );
 
             return ResponseEntity.ok().body(Map.of(
@@ -56,7 +58,8 @@ public class NewApplicationController {
             @RequestPart(value = "idCopy", required = false) MultipartFile idCopy,
             @RequestPart(value = "ownershipCertificate", required = false) MultipartFile ownershipCertificate,
             @RequestPart(value = "gramaNiladhariCertificate", required = false) MultipartFile gramaNiladhariCertificate,
-            @RequestPart(value = "threephChartedEngineerCertificate", required = false) MultipartFile threephChartedEngineerCertificate
+            @RequestPart(value = "threephChartedEngineerCertificate", required = false) MultipartFile threephChartedEngineerCertificate,
+            @RequestParam(value = "tempId", required = false) String tempId
     ) {
         try {
             System.out.println("Update request received for RefNo: " + refNo);
@@ -67,7 +70,8 @@ public class NewApplicationController {
                     idCopy,
                     ownershipCertificate,
                     gramaNiladhariCertificate,
-                    threephChartedEngineerCertificate
+                    threephChartedEngineerCertificate,
+                    tempId
             );
 
             return ResponseEntity.ok().body(Map.of(

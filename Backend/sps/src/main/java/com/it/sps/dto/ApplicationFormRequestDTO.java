@@ -6,9 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ApplicationFormRequestDTO {
-    // We use this one just to get the ID
-    private FormApplicantDTO formApplicantDto;
-
-    private FormApplicationDTO applicationFormRequestDto;
-    private FormWiringLandDetailDTO formWiringLandDetailDto;
+    // Match the names used in service code
+    private ApplicationDTO applicationDto;  // Changed from FormApplicationDTO
+    private ApplicantDTO applicantDto;      // Changed from FormApplicantDTO
+    private WiringLandDetailDto wiringLandDetailDto;  // Changed from FormWiringLandDetailDTO
 }
