@@ -25,29 +25,11 @@ public class SchedulerController {
     @Autowired
     private AppointmentService appointmentService;
 
-//    @GetMapping("/applications")
-//    public ResponseEntity<List<SchedulerApplicationDto>> getSchedulerApplications() {
-//        return ResponseEntity.ok(schedulerService.getSchedulerApplications());
-//
-//    }
-
-
-
-    // with departent id and application type
-
-
     @GetMapping("/applications")
-    public ResponseEntity<List<SchedulerApplicationDto>> getSchedulerApplications(
-            @RequestParam String deptId,
-            @RequestParam String applicationType) {
+    public ResponseEntity<List<SchedulerApplicationDto>> getSchedulerApplications() {
+        return ResponseEntity.ok(schedulerService.getSchedulerApplications());
 
-        List<SchedulerApplicationDto> applications =
-                schedulerService.getSchedulerApplicationsByDeptAndType(deptId, applicationType);
-        return ResponseEntity.ok(applications);
     }
-
-
-
 
     @PostMapping("/appointments")
     public ResponseEntity<String> addAppointment(@RequestBody AppointmentRequestDto dto) {
@@ -59,34 +41,35 @@ public class SchedulerController {
         }
     }
 
-//    @GetMapping("/appointments")
-//    public ResponseEntity<?> getAllAppointments() {
-//        try {
-//            List<AppointmentResponseDto> appointments = appointmentService.getAllAppointments();
-//            return ResponseEntity.ok(appointments);
-//        } catch (Exception e) {
-//            e.printStackTrace();  // See full error in logs
-//            return ResponseEntity.status(500).body("Internal Server Error: " + e.getMessage());
-//        }
-//    }
-    //get appointment with department ID
-
     @GetMapping("/appointments")
-    public ResponseEntity<?> getAppointmentsByDept(@RequestParam String deptId) {
+    public ResponseEntity<?> getAllAppointments() {
         try {
-            List<AppointmentResponseDto> appointments = appointmentService.getAppointmentsByDept(deptId);
+            List<AppointmentResponseDto> appointments = appointmentService.getAllAppointments();
             return ResponseEntity.ok(appointments);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace();  // See full error in logs
             return ResponseEntity.status(500).body("Internal Server Error: " + e.getMessage());
         }
     }
 
+//    @PutMapping("/appointments/{appointmentId}/{deptId}")
+//    public ResponseEntity<String> updateAppointment(
+//            @PathVariable String appointmentId,
+//            @PathVariable String deptId,
+//            @RequestBody AppointmentRequestDto dto) {
+//        try {
+//            appointmentService.updateAppointment(appointmentId, deptId, dto);
+//            return ResponseEntity.ok("Appointment updated successfully.");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("Failed to update appointment: " + e.getMessage());
+//        }
+//    }
 
-    @PutMapping("/appointments")
+    @PutMapping("/appointments/{appointmentId}/{deptId}")
     public ResponseEntity<String> updateAppointment(
-            @RequestParam String appointmentId,
-            @RequestParam String deptId,
+            @PathVariable String appointmentId,
+            @PathVariable String deptId,
             @RequestBody AppointmentRequestDto dto) {
         try {
             System.out.println("Received update request: " + dto);
