@@ -1,8 +1,12 @@
 package com.it.sps.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 @Getter
 @Setter
@@ -40,11 +44,14 @@ public class Gldeptin {
     @Column(name = "BULK_SUPPLIER_ADD", length = 200)
     private String bulkSupplierAdd;
 
-    @Column(name = "BULK_SUPPLIER_TEL", precision = 10, scale = 0)
+    @Column(name = "BULK_SUPPLIER_TEL")
     private Long bulkSupplierTel;
 
     @Column(name = "BRANCH_CODE", length = 3)
     private String branchCode;
+
+    @Column(name = "BANK_CODE", length = 4)
+    private String bankCode;
 
     @Column(name = "POS_CENTER", length = 6)
     private String posCenter;
@@ -64,8 +71,9 @@ public class Gldeptin {
     @Column(name = "EMAIL_NO", length = 30)
     private String emailNo;
 
-    @Column(name = "IS_PIV1_NEEDED_DEFAULT", length = 1)
-    private String isPiv1NeededDefault;
+    @ColumnDefault("'Y'")
+    @Column(name = "IS_PIV1_NEEDED_DEFAULT")
+    private Boolean isPiv1NeededDefault;
 
     @Column(name = "ES_MOBILE", length = 10)
     private String esMobile;
@@ -73,13 +81,4 @@ public class Gldeptin {
     @Column(name = "AREA_CODE", length = 3)
     private String areaCode;
 
-    // Foreign key to BRANCH
-    @ManyToOne
-    @JoinColumn(name = "DEPT_TYPE_CODE", referencedColumnName = "DEPT_TYPE_CODE", insertable = false, updatable = false)
-    private DeptType deptTypeEntity;
-
-    // Foreign key to GLDEPTM (if still needed)
-    @ManyToOne
-    @JoinColumn(name = "DEPT_ID", referencedColumnName = "DEPT_ID", insertable = false, updatable = false)
-    private Gldeptm gldeptm;
 }
