@@ -8,7 +8,7 @@ import java.util.Date;
 
 /**
  * The persistent class for the SAUSERM database table.
- * 
+ *
  */
 @Entity
 @NamedQuery(name="Sauserm.findAll", query="SELECT s FROM Sauserm s")

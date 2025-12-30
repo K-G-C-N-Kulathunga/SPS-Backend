@@ -22,8 +22,8 @@ import java.util.UUID;
 @RequestMapping("/api/upload")
 public class FileUploadController {
 
-    @Value("${upload.dir:uploads}")
-    private String uploadDir;
+
+    private final String uploadDir = "E:\\Github\\SPS-Project-\\Backend\\sps\\uploads";
 
 
     @Autowired
@@ -47,14 +47,6 @@ public class FileUploadController {
         System.out.println("gramaNiladhariCertificate: " + (gramaNiladhariCertificate != null ? gramaNiladhariCertificate.getOriginalFilename() : "null"));
         System.out.println("threephChartedEngineerCertificate: " + (threephChartedEngineerCertificate != null ? threephChartedEngineerCertificate.getOriginalFilename() : "null"));
         try {
-            // Ensure uploadDir ends with the system separator
-            if (uploadDir == null || uploadDir.isBlank()) {
-                uploadDir = "uploads";
-            }
-            if (!uploadDir.endsWith(File.separator)) {
-                uploadDir = uploadDir + File.separator;
-            }
-
             File dir = new File(uploadDir);
             if (!dir.exists() && !dir.mkdirs()) {
                 System.out.println("Failed to create upload directory: " + uploadDir);
@@ -82,25 +74,16 @@ public class FileUploadController {
             System.out.println("No file provided for: " + docType);
             return;
         }
-        String original = file.getOriginalFilename();
-        String extension = original != null && original.contains(".")
-                ? original.substring(original.lastIndexOf('.'))
-                : "";
+        String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.'));
         String newFilename = tempId + "_" + docType + extension;
-        // Ensure uploadDir uses correct separator and resolve path safely
-        if (uploadDir == null || uploadDir.isBlank()) {
-            uploadDir = "uploads" + File.separator;
-        } else if (!uploadDir.endsWith(File.separator)) {
-            uploadDir = uploadDir + File.separator;
-        }
-        Path filePath = Paths.get(uploadDir, newFilename);
+        Path filePath = Paths.get(uploadDir + newFilename);
         System.out.println("Saving file: " + newFilename + " to " + filePath);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
         DocumentUpload documentUpload = new DocumentUpload();
         documentUpload.setDocId(UUID.randomUUID().toString().substring(0, 10));
         documentUpload.setTempId(tempId);
-        documentUpload.setDocpath(filePath.toAbsolutePath().toString());
+        documentUpload.setDocpath(filePath.toString());
         documentUpload.setUploadedDate(LocalDate.now());
         documentUploadRepository.save(documentUpload);
         System.out.println("Saved document info to DB for: " + docType);
