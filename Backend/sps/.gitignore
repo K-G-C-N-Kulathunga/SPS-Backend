@@ -19,6 +19,9 @@ target/
 *.iml
 *.ipr
 
+
+
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
@@ -32,3 +35,7 @@ build/
 ### VS Code ###
 .vscode/
 /.metadata/
+
+
+# Ignore Spring Boot configuration file
+# src/main/resources/application.properties
