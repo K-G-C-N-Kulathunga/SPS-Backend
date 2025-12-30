@@ -45,8 +45,10 @@ public class ApplicantService {
     }
 
     public ApplicantDTO findApplicantDTOByIdNo(String applicantId) {
-
-        return applicantRepository.findApplicantDTOByIdNo(applicantId);
+        if (applicantId == null) return null;
+        // Normalize any trailing lowercase 'v' to uppercase for consistency, but repository query is case-insensitive.
+        String normalized = applicantId.endsWith("v") ? applicantId.substring(0, applicantId.length()-1) + "V" : applicantId;
+        return applicantRepository.findApplicantDTOByIdNo(normalized);
 
     }
     
@@ -169,7 +171,9 @@ public class ApplicantService {
 
     // Get applicant info with NIC
     public Optional<ApplicantDTO> getApplicantByIdNo(String idNo) {
-        Optional<Applicant> applicant = applicantRepository.findByIdNo(idNo);
+        if (idNo == null) return Optional.empty();
+        String normalized = idNo.endsWith("v") ? idNo.substring(0, idNo.length()-1) + "V" : idNo;
+        Optional<Applicant> applicant = applicantRepository.findByIdNoIgnoreCase(normalized);
         return applicant.map(this::convertToDTO);
     }
 
