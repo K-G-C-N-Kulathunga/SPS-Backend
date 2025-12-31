@@ -18,6 +18,7 @@ import com.it.sps.repository.SpsErestRepository;
 import com.it.sps.repository.ApplicationRepository;
 import com.it.sps.dto.SpsErestDto;
 import com.it.sps.service.SpsErestService;
+import com.it.sps.entity.SpsErestPK;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -121,6 +122,8 @@ public class ApplicationConnectionDetailsController {
             return ResponseEntity.ok(serviceEstimateService.saveFromFrontendData(frontendData));
         } catch (Exception e) {
             e.printStackTrace();
+            String message = e.getMessage();
+            String rawMsg = (e.getCause() != null ? e.getCause().getMessage() : null);
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Failed to save service estimate data",
                     "message", message,
@@ -143,7 +146,7 @@ public class ApplicationConnectionDetailsController {
                         "message", "Pass confirm=true to proceed with deletion."));
             }
 
-            boolean exists = spsErestRepository.existsByApplicationNoAndDeptId(applicationNo, deptId);
+            boolean exists = spsErestRepository.existsById(new SpsErestPK(applicationNo, deptId));
             if (!exists) {
                 return ResponseEntity.status(404).body(Map.of(
                         "error", "Service estimate not found",
@@ -179,7 +182,7 @@ public class ApplicationConnectionDetailsController {
                         "message", "Pass confirm=true to proceed with deletion."));
             }
 
-            boolean exists = spsErestRepository.existsByApplicationNoAndDeptId(applicationNo, deptId);
+            boolean exists = spsErestRepository.existsById(new SpsErestPK(applicationNo, deptId));
             if (!exists) {
                 return ResponseEntity.status(404).body(Map.of(
                         "error", "Service estimate not found",
