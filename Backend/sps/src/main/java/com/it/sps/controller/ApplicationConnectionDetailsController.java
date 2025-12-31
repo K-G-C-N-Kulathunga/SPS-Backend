@@ -11,6 +11,9 @@ import com.it.sps.service.ServiceEstimateService;
 import com.it.sps.service.SpdppolmService;
 import com.it.sps.service.SpstrutmService;
 import com.it.sps.service.SpstaymtService;
+import com.it.sps.service.SpsetpolService;
+import com.it.sps.service.SpsetstuService;
+import com.it.sps.service.SpsetstyService;
 import com.it.sps.repository.SpsErestRepository;
 import com.it.sps.repository.ApplicationRepository;
 import com.it.sps.dto.SpsErestDto;
@@ -33,6 +36,9 @@ public class ApplicationConnectionDetailsController {
     private final SpsErestRepository spsErestRepository;
     private final ApplicationRepository applicationRepository;
     private final SpsErestService spsErestService;
+    private final SpsetpolService spsetpolService;
+    private final SpsetstuService spsetstuService;
+    private final SpsetstyService spsetstyService;
 
     public ApplicationConnectionDetailsController(ApplicationConnectionDetailsService service,
             ServiceEstimateService serviceEstimateService,
@@ -41,7 +47,10 @@ public class ApplicationConnectionDetailsController {
             SpstaymtService spstaymtService,
             SpsErestRepository spsErestRepository,
             ApplicationRepository applicationRepository,
-            SpsErestService spsErestService) {
+            SpsErestService spsErestService,
+            SpsetpolService spsetpolService,
+            SpsetstuService spsetstuService,
+            SpsetstyService spsetstyService) {
         this.service = service;
         this.serviceEstimateService = serviceEstimateService;
         this.spdppolmService = spdppolmService;
@@ -50,6 +59,9 @@ public class ApplicationConnectionDetailsController {
         this.spsErestRepository = spsErestRepository;
         this.applicationRepository = applicationRepository;
         this.spsErestService = spsErestService;
+        this.spsetpolService = spsetpolService;
+        this.spsetstuService = spsetstuService;
+        this.spsetstyService = spsetstyService;
     }
 
     // ========================
@@ -224,6 +236,78 @@ public class ApplicationConnectionDetailsController {
     }
 
     // ========================
+    // Service Estimate Deletion (Modify mode -> Delete)
+    // ========================
+    @DeleteMapping("/service-estimate/{applicationNo}/{deptId}")
+    public ResponseEntity<?> deleteServiceEstimate(
+            @PathVariable String applicationNo,
+            @PathVariable String deptId,
+            @RequestParam(name = "confirm", defaultValue = "false") boolean confirm) {
+        try {
+            if (!confirm) {
+                return ResponseEntity.badRequest().body(Map.of(
+                        "error", "Confirmation required",
+                        "message", "Pass confirm=true to proceed with deletion."));
+            }
+
+            boolean exists = spsErestRepository.existsByApplicationNoAndDeptId(applicationNo, deptId);
+            if (!exists) {
+                return ResponseEntity.status(404).body(Map.of(
+                        "error", "Service estimate not found",
+                        "applicationNo", applicationNo,
+                        "deptId", deptId));
+            }
+
+            serviceEstimateService.deleteServiceEstimate(applicationNo, deptId);
+
+            // After deletion, this applicationNo should move to Add (unused) list automatically
+            return ResponseEntity.ok(Map.of(
+                    "status", "deleted",
+                    "applicationNo", applicationNo,
+                    "deptId", deptId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of(
+                    "error", "Failed to delete service estimate",
+                    "message", e.getMessage()));
+        }
+    }
+
+    // Alternate deletion endpoint using query params to avoid path issues with slashes
+    @DeleteMapping("/service-estimate")
+    public ResponseEntity<?> deleteServiceEstimateQuery(
+            @RequestParam String applicationNo,
+            @RequestParam String deptId,
+            @RequestParam(name = "confirm", defaultValue = "false") boolean confirm) {
+        try {
+            if (!confirm) {
+                return ResponseEntity.badRequest().body(Map.of(
+                        "error", "Confirmation required",
+                        "message", "Pass confirm=true to proceed with deletion."));
+            }
+
+            boolean exists = spsErestRepository.existsByApplicationNoAndDeptId(applicationNo, deptId);
+            if (!exists) {
+                return ResponseEntity.status(404).body(Map.of(
+                        "error", "Service estimate not found",
+                        "applicationNo", applicationNo,
+                        "deptId", deptId));
+            }
+
+            serviceEstimateService.deleteServiceEstimate(applicationNo, deptId);
+            return ResponseEntity.ok(Map.of(
+                    "status", "deleted",
+                    "applicationNo", applicationNo,
+                    "deptId", deptId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of(
+                    "error", "Failed to delete service estimate",
+                    "message", e.getMessage()));
+        }
+    }
+
+    // ========================
     // Service Estimate fetch for Modify auto-fill
     // ========================
     @GetMapping("/service-estimate/sps-arest")
@@ -257,6 +341,7 @@ public class ApplicationConnectionDetailsController {
             dto.setPhase(entity.getPhase());
             dto.setInsideLength(entity.getInsideLength());
             dto.setIsSyaNeeded(entity.getIsSyaNeeded());
+            dto.setIsServiceConversion(entity.getIsServiceConversion());
             return ResponseEntity.ok(dto);
         } catch (Exception e) {
             e.printStackTrace();
@@ -310,6 +395,63 @@ public class ApplicationConnectionDetailsController {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body(List.of());
+        }
+    }
+
+    // ========================
+    // Sketch4 Read Endpoints (Saved Poles/Struts/Stays)
+    // ========================
+    @GetMapping("/service-estimate/sketch4/poles")
+    public ResponseEntity<?> getSavedPoles(@RequestParam String applicationNo, @RequestParam String deptId) {
+        try {
+            var list = spsetpolService.findByApplicationAndDept(applicationNo, deptId);
+            // Map entities to lightweight payload for frontend tables
+            var payload = list.stream().map(e -> {
+                var id = e.getId();
+                return Map.of(
+                        "selectPole", id.getMatCd(),
+                        "poleType", id.getPoleType(),
+                        "pointerType", id.getPointType(),
+                        "connFrom", id.getFromConductor(),
+                        "connTo", id.getToConductor(),
+                        "qty", e.getMatQty()
+                );
+            }).toList();
+            return ResponseEntity.ok(payload);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/service-estimate/sketch4/struts")
+    public ResponseEntity<?> getSavedStruts(@RequestParam String applicationNo, @RequestParam String deptId) {
+        try {
+            var list = spsetstuService.findByApplicationAndDept(applicationNo, deptId);
+            var payload = list.stream().map(e -> Map.of(
+                    "type", e.getId().getMatCd(),
+                    "qty", e.getMatQty()
+            )).toList();
+            return ResponseEntity.ok(payload);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/service-estimate/sketch4/stays")
+    public ResponseEntity<?> getSavedStays(@RequestParam String applicationNo, @RequestParam String deptId) {
+        try {
+            var list = spsetstyService.findByApplicationAndDept(applicationNo, deptId);
+            var payload = list.stream().map(e -> Map.of(
+                    "type", e.getId().getMatCd(),
+                    "stayType", e.getId().getStayType(),
+                    "qty", e.getMatQty()
+            )).toList();
+            return ResponseEntity.ok(payload);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
         }
     }
 }

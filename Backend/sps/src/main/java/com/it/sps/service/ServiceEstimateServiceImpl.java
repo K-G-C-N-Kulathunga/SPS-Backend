@@ -196,6 +196,33 @@ public class ServiceEstimateServiceImpl implements ServiceEstimateService {
         }
     }
 
+    @Override
+    public void deleteServiceEstimate(String applicationNo, String deptId) {
+        if (applicationNo == null || applicationNo.isBlank()) {
+            throw new IllegalArgumentException("Application number is required");
+        }
+        if (deptId == null || deptId.isBlank()) {
+            throw new IllegalArgumentException("Department ID is required");
+        }
+
+        // Delete child tables first, then parent (SPSEREST)
+        // All operations are within the service's transactional boundary
+        try {
+            // Remove sketch4 related rows
+            spsetpolService.deleteByApplicationAndDept(applicationNo, deptId);
+            spsetstuService.deleteByApplicationAndDept(applicationNo, deptId);
+            spsetstyService.deleteByApplicationAndDept(applicationNo, deptId);
+
+            // Remove wire details
+            spSetWirService.deleteByApplicationAndDept(applicationNo, deptId);
+
+            // Finally remove main service estimate
+            spsErestService.delete(applicationNo, deptId);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete service estimate: " + e.getMessage(), e);
+        }
+    }
+
     private Sketch4Result saveSketch4(String applicationNo, String deptId, Map<String, Object> sketch4) {
         Sketch4Result result = new Sketch4Result();
         // Parse poles -> SPSETPOL
@@ -319,6 +346,12 @@ public class ServiceEstimateServiceImpl implements ServiceEstimateService {
         dto.setConversionLength(parseBigDecimal(sketch1.get("conversion1P3P")));
         dto.setConversionLength2p(parseBigDecimal(sketch1.get("conversion2P3P")));
         dto.setLoopCable(normalizeYesNoValue(getStringValue(sketch1, "loopService")));
+        // Map New Length Within Premises -> insideLength (accept multiple key variants for robustness)
+        BigDecimal insideLen = parseBigDecimal(sketch1.get("newLengthWithinPremises"));
+        if (insideLen == null || insideLen.compareTo(BigDecimal.ZERO) == 0) {
+            insideLen = parseBigDecimal(sketch1.get("insideLength"));
+        }
+        dto.setInsideLength(insideLen);
 
         // Map sketch2 data
         Map<String, Object> sketch2 = (Map<String, Object>) frontendData.get("sketch2");
@@ -328,6 +361,7 @@ public class ServiceEstimateServiceImpl implements ServiceEstimateService {
         dto.setNoOfSpans(parseBigDecimal(sketch2.get("numberOfRanges")));
         dto.setPoleno(getStringValue(sketch2, "poleNumber"));
         dto.setIsSyaNeeded(normalizeYesNoValue(getStringValue(sketch2, "isSyaNeeded"))); // Map from frontend data
+        dto.setIsServiceConversion(getStringValue(sketch2, "isServiceConversion"));
         dto.setBusinessType(getStringValue(sketch2, "businessType")); // Business type from sketch2
 
         // Map sketch3 data
@@ -341,9 +375,8 @@ public class ServiceEstimateServiceImpl implements ServiceEstimateService {
         dto.setFeederControlType(getStringValue(sketch3, "feederControlType"));
         dto.setPhase(getStringValue(sketch3, "phase"));
 
-        // Set default values for required fields that don't have mapping
+        // Set default values for required fields that don't have explicit mapping
         dto.setIsStandardVc("Y"); // Default value
-        dto.setInsideLength(BigDecimal.ZERO); // Default value
 
         System.out.println("DEBUG: Final SpsErestDto: " + dto);
         return dto;
