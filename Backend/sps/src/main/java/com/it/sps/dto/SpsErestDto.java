@@ -31,7 +31,6 @@ public class SpsErestDto {
     private String feederControlType;          // FEEDER_CONTROL_TYPE
     private String phase;                      // PHASE
     private BigDecimal insideLength;
-    private String isServiceConversion;        // IS_SERVICE_CONVERSION
     // --- Getters & Setters ---
     public String getApplicationNo() { return applicationNo; }
     public void setApplicationNo(String applicationNo) { this.applicationNo = applicationNo; }
@@ -108,14 +107,6 @@ public class SpsErestDto {
 
     public void setInsideLength(BigDecimal insideLength) {
         this.insideLength = insideLength;
-    }
-
-    public String getIsServiceConversion() {
-        return isServiceConversion;
-    }
-
-    public void setIsServiceConversion(String isServiceConversion) {
-        this.isServiceConversion = isServiceConversion;
     }
 
 }
