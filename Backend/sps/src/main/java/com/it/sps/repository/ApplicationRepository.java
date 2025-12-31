@@ -54,7 +54,4 @@ public interface ApplicationRepository extends JpaRepository<Application,Applica
 													   @Param("applicationType") String applicationType,
 													   @Param("status") String status);
 
-		@Query("SELECT a.applicationNo FROM Application a WHERE a.id.deptId = :deptId")
-		List<String> findApplicationNosByDeptId(@Param("deptId") String deptId);
-
 }
