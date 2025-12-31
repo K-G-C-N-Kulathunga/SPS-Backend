@@ -18,7 +18,6 @@ import com.it.sps.repository.SpsErestRepository;
 import com.it.sps.repository.ApplicationRepository;
 import com.it.sps.dto.SpsErestDto;
 import com.it.sps.service.SpsErestService;
-import com.it.sps.entity.SpsErestPK;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -84,6 +83,54 @@ public class ApplicationConnectionDetailsController {
         }
     }
 
+    // ========================
+    // Filtered Application No lists for Add/Modify modes
+    // ========================
+
+    @GetMapping("/application-nos/unused")
+    public ResponseEntity<List<ApplicationDropdownDto>> getUnusedApplicationNos(
+            @RequestParam String deptId,
+            @RequestParam(required = false) String applicationType,
+            @RequestParam(required = false) String status) {
+        try {
+            // Base list using existing filters if provided
+            List<ApplicationDropdownDto> base = (applicationType != null && status != null)
+                    ? service.getApplicationsByDeptTypeStatus(deptId, applicationType, status)
+                    : applicationRepository.findApplicationNosByDeptId(deptId).stream()
+                            .map(appNo -> new ApplicationDropdownDto(appNo, deptId))
+                            .toList();
+
+            List<String> usedNos = spsErestRepository.findUsedApplicationNosByDeptId(deptId);
+            List<ApplicationDropdownDto> unused = base.stream()
+                    .filter(dto -> dto != null && dto.getApplicationNo() != null && !usedNos.contains(dto.getApplicationNo()))
+                    .toList();
+            return ResponseEntity.ok(unused);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(List.of());
+        }
+    }
+
+    @GetMapping("/application-nos/used")
+    public ResponseEntity<List<ApplicationDropdownDto>> getUsedApplicationNos(
+            @RequestParam String deptId,
+            @RequestParam(required = false) String applicationType,
+            @RequestParam(required = false) String status) {
+        try {
+            List<String> usedNos = spsErestRepository.findUsedApplicationNosByDeptId(deptId);
+            // If filters provided, intersect with those
+            List<ApplicationDropdownDto> filtered = (applicationType != null && status != null)
+                    ? service.getApplicationsByDeptTypeStatus(deptId, applicationType, status).stream()
+                            .filter(dto -> dto != null && usedNos.contains(dto.getApplicationNo()))
+                            .toList()
+                    : usedNos.stream().map(appNo -> new ApplicationDropdownDto(appNo, deptId)).toList();
+            return ResponseEntity.ok(filtered);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(List.of());
+        }
+    }
+
     @GetMapping("/details")
     public ResponseEntity<?> getApplicationDetails(@RequestParam String applicationNo,
             @RequestParam String deptId) {
@@ -119,11 +166,68 @@ public class ApplicationConnectionDetailsController {
     public ResponseEntity<?> saveFromFrontend(
             @RequestBody Map<String, Object> frontendData) {
         try {
+            // Validate mode and enforce existence rules
+            String mode = null;
+            Object modeObj = frontendData.get("mode");
+            if (modeObj != null) mode = modeObj.toString().trim().toUpperCase();
+
+            Map<String, Object> connectionDetails = (Map<String, Object>) frontendData.get("connectionDetails");
+            if (connectionDetails == null) {
+                return ResponseEntity.badRequest().body(Map.of(
+                        "error", "Missing connectionDetails",
+                        "message", "connectionDetails is required"));
+            }
+            String applicationNo = String.valueOf(connectionDetails.getOrDefault("applicationNo", "")).trim();
+            String deptId = String.valueOf(connectionDetails.getOrDefault("deptId", "")).trim();
+
+            if (applicationNo.isEmpty() || deptId.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of(
+                        "error", "Missing identifiers",
+                        "message", "applicationNo and deptId are required"));
+            }
+
+            boolean exists = spsErestRepository.existsByApplicationNoAndDeptId(applicationNo, deptId);
+
+            if ("ADD".equals(mode)) {
+                if (exists) {
+                    return ResponseEntity.badRequest().body(Map.of(
+                            "error", "Service estimate already exists for this application number",
+                            "code", "ESTIMATE_EXISTS"));
+                }
+            } else if ("MODIFY".equals(mode)) {
+                if (!exists) {
+                    return ResponseEntity.badRequest().body(Map.of(
+                            "error", "No existing service estimate for this application number",
+                            "code", "ESTIMATE_NOT_FOUND"));
+                }
+            }
+
             return ResponseEntity.ok(serviceEstimateService.saveFromFrontendData(frontendData));
         } catch (Exception e) {
             e.printStackTrace();
-            String message = e.getMessage();
-            String rawMsg = (e.getCause() != null ? e.getCause().getMessage() : null);
+            // Unwrap root cause for clearer client error messages
+            Throwable root = e;
+            while (root.getCause() != null && root.getCause() != root) {
+                root = root.getCause();
+            }
+
+            String rawMsg = root.getMessage() != null ? root.getMessage() : e.getMessage();
+            String message = rawMsg;
+
+            // Friendly mappings for common cases
+            if (rawMsg != null) {
+                String m = rawMsg.toLowerCase();
+                if (m.contains("invalid material codes") || m.contains("not in inmatm")) {
+                    message = "Invalid material codes in poles/struts/stays. Please check MAT_CD values.";
+                } else if (m.contains("application not found")) {
+                    message = "Application not found; verify Application No and Department.";
+                } else if (m.contains("constraint") || m.contains("unique") || m.contains("duplicate")) {
+                    message = "Database constraint violation while saving. Check duplicates and required fields.";
+                } else if (m.contains("timeout")) {
+                    message = "Transaction timed out while saving. Please try again or reduce payload.";
+                }
+            }
+
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Failed to save service estimate data",
                     "message", message,
@@ -146,7 +250,7 @@ public class ApplicationConnectionDetailsController {
                         "message", "Pass confirm=true to proceed with deletion."));
             }
 
-            boolean exists = spsErestRepository.existsById(new SpsErestPK(applicationNo, deptId));
+            boolean exists = spsErestRepository.existsByApplicationNoAndDeptId(applicationNo, deptId);
             if (!exists) {
                 return ResponseEntity.status(404).body(Map.of(
                         "error", "Service estimate not found",
@@ -182,7 +286,7 @@ public class ApplicationConnectionDetailsController {
                         "message", "Pass confirm=true to proceed with deletion."));
             }
 
-            boolean exists = spsErestRepository.existsById(new SpsErestPK(applicationNo, deptId));
+            boolean exists = spsErestRepository.existsByApplicationNoAndDeptId(applicationNo, deptId);
             if (!exists) {
                 return ResponseEntity.status(404).body(Map.of(
                         "error", "Service estimate not found",
