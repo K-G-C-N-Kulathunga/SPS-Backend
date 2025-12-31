@@ -25,6 +25,7 @@ package com.it.sps.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -38,7 +39,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> {}) // will use your WebConfig CORS
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().authenticated()
+                // Permit preflight requests for CORS
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers("/api/login/**").permitAll()
+                .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults()); // ✅ enable Basic Auth
 

@@ -9,7 +9,13 @@ import java.util.Map;
 public interface ServiceEstimateService {
     ServiceEstimateResult saveServiceEstimate(ServiceEstimateDto dto);
     ServiceEstimateResult saveFromFrontendData(Map<String, Object> frontendData);
-    
+
+    /**
+     * Delete the service estimate and all related rows (SPSETWIR, SPSETPOL, SPSETSTU, SPSETSTY)
+     * for the given application number and department. Does NOT delete the Application record.
+     */
+    void deleteServiceEstimate(String applicationNo, String deptId);
+
     public static class ServiceEstimateResult {
         private SpsErest spsErest;
         private List<SpSetWir> spSetWirList;
