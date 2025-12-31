@@ -29,32 +29,4 @@ public interface ApplicationRepository extends JpaRepository<Application,Applica
 
 	    @Query("SELECT COUNT(a) > 0 FROM Application a WHERE a.applicationNo = :applicationNo")
 	    boolean existsByApplicationNo(String applicationNo);
-		
-		@Query("SELECT a FROM Application a " +
-            "WHERE a.id.deptId = :deptId AND a.applicationType = :applicationType")
-    	List<Application> findByDeptIdAndType(@Param("deptId") String deptId,
-                                          @Param("applicationType") String applicationType);
-
-
-
-    // with departent id and application type
-//        @Query("SELECT new com.it.sps.dto.SchedulerApplicationDto(a.id.applicationId, a.id.deptId) " +
-//                "FROM Application a " +
-//                "WHERE a.id.deptId = :deptId AND a.applicationType = :applicationType")
-//        List<SchedulerApplicationDto> findApplicationsByDeptAndType(
-//                @Param("deptId") String deptId,
-//                @Param("applicationType") String applicationType
-//        );
-
-		@Query("SELECT a FROM Application a " +
-				"WHERE a.id.deptId = :deptId " +
-				"AND a.applicationType = :applicationType " +
-				"AND a.status = :status")
-		List<Application> findApplicationsByDeptTypeStatus(@Param("deptId") String deptId,
-													   @Param("applicationType") String applicationType,
-													   @Param("status") String status);
-
-		@Query("SELECT a.applicationNo FROM Application a WHERE a.id.deptId = :deptId")
-		List<String> findApplicationNosByDeptId(@Param("deptId") String deptId);
-
 }

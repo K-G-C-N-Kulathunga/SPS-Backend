@@ -21,37 +21,10 @@
 //    }
 //}
 
-//package com.it.sps.config;
-//
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.security.config.Customizer;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.web.SecurityFilterChain;
-//
-//@Configuration
-//public class SecurityConfig {
-//
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf(csrf -> csrf.disable())
-//                .cors(cors -> {}) // will use your WebConfig CORS
-//                .authorizeHttpRequests(auth -> auth
-//                        .anyRequest().authenticated()
-//                )
-//                .httpBasic(Customizer.withDefaults()); // ✅ enable Basic Auth
-//
-//        return http.build();
-//    }
-//}
-
-
 package com.it.sps.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -63,15 +36,13 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> {})
+                .cors(cors -> {}) // will use your WebConfig CORS
                 .authorizeHttpRequests(auth -> auth
-                // Permit preflight requests for CORS
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers("/api/login/**").permitAll()
-                .anyRequest().authenticated()
+                        .anyRequest().authenticated()
                 )
-                .httpBasic(Customizer.withDefaults());
+                .httpBasic(Customizer.withDefaults()); // ✅ enable Basic Auth
 
         return http.build();
     }
 }
+
