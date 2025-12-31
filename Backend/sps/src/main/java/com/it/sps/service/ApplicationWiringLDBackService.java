@@ -197,10 +197,10 @@ public class ApplicationWiringLDBackService {
         dashboard.setTariffCatCode(tariffCat);
         dashboard.setTariffCode(tariff);
 
-        dashboard.setAppSubmittedDate(new Date().toInstant());
+        dashboard.setAppSubmittedDate(new Date());
         dashboard.setAppSubmittedBy("online");
         dashboard.setStatus(application.getStatus());
-        dashboard.setStatusChangedDate(new Date().toInstant());
+        dashboard.setStatusChangedDate(new Date());
         dashboard.setStatusChangedBy("online");
         dashboard.setStatusChangedReason("Submitted online");
         dashboard.setOriginatedBy("WEB");

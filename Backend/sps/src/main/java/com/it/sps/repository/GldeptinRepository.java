@@ -22,5 +22,10 @@ public interface GldeptinRepository extends JpaRepository<Gldeptin, String> {
     List<DepotDto> findDepotDepartments(@Param("prefix") String deptId);
     List<Gldeptin> findByDeptAreaIgnoreCase(String deptArea);
 
+    // ✅ ADDED THIS METHOD TO FIX THE ERROR
+    // This maps the 'rptUser' argument (passed from LoginService) to the 'deptId' column
+    @Query("SELECT d.deptId FROM Gldeptin d WHERE d.deptId = :rptUser")
+    String findDeptIdByRptUser(@Param("rptUser") String rptUser);
+
 
 }
