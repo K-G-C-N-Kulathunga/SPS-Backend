@@ -124,54 +124,6 @@ public class ApplicationConnectionDetailsController {
         }
     }
 
-    // ========================
-    // Filtered Application No lists for Add/Modify modes
-    // ========================
-
-    @GetMapping("/application-nos/unused")
-    public ResponseEntity<List<ApplicationDropdownDto>> getUnusedApplicationNos(
-            @RequestParam String deptId,
-            @RequestParam(required = false) String applicationType,
-            @RequestParam(required = false) String status) {
-        try {
-            // Base list using existing filters if provided
-            List<ApplicationDropdownDto> base = (applicationType != null && status != null)
-                    ? service.getApplicationsByDeptTypeStatus(deptId, applicationType, status)
-                    : applicationRepository.findApplicationNosByDeptId(deptId).stream()
-                            .map(appNo -> new ApplicationDropdownDto(appNo, deptId))
-                            .toList();
-
-            List<String> usedNos = spsErestRepository.findUsedApplicationNosByDeptId(deptId);
-            List<ApplicationDropdownDto> unused = base.stream()
-                    .filter(dto -> dto != null && dto.getApplicationNo() != null && !usedNos.contains(dto.getApplicationNo()))
-                    .toList();
-            return ResponseEntity.ok(unused);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(List.of());
-        }
-    }
-
-    @GetMapping("/application-nos/used")
-    public ResponseEntity<List<ApplicationDropdownDto>> getUsedApplicationNos(
-            @RequestParam String deptId,
-            @RequestParam(required = false) String applicationType,
-            @RequestParam(required = false) String status) {
-        try {
-            List<String> usedNos = spsErestRepository.findUsedApplicationNosByDeptId(deptId);
-            // If filters provided, intersect with those
-            List<ApplicationDropdownDto> filtered = (applicationType != null && status != null)
-                    ? service.getApplicationsByDeptTypeStatus(deptId, applicationType, status).stream()
-                            .filter(dto -> dto != null && usedNos.contains(dto.getApplicationNo()))
-                            .toList()
-                    : usedNos.stream().map(appNo -> new ApplicationDropdownDto(appNo, deptId)).toList();
-            return ResponseEntity.ok(filtered);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(List.of());
-        }
-    }
-
     @GetMapping("/details")
     public ResponseEntity<?> getApplicationDetails(@RequestParam String applicationNo,
                                                    @RequestParam String deptId) {
