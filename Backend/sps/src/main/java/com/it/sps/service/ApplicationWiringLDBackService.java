@@ -61,7 +61,7 @@ public class ApplicationWiringLDBackService {
     private DashboardRepository dashboardRepository;
 
 
-    private static final String DEFAULT_DEPT_ID = "510.20";
+    private static final String DEFAULT_DEPT_ID = "510.20"; //423.10
     private static final String UPLOAD_DIR = "C:/SPS_Uploads/";
 
     @Transactional
@@ -107,7 +107,7 @@ public class ApplicationWiringLDBackService {
             application.setApplicant(applicant);
             application.setApplicationNo(newAppNo); // Set the generated ENC number
             application.setSubmitDate(new Date());
-            application.setStatus("P");
+            application.setStatus("C");
 
             // --- FIX: Application Defaults ---
             application.setApplicationType("NC");
@@ -440,60 +440,49 @@ public class ApplicationWiringLDBackService {
         return String.format("%s/ENC/%s/%04d", deptId, yearSuffix, Integer.parseInt(sequence));
     }
 
+    // ===== Sequences / IDs =====
+
     @SuppressWarnings("unchecked")
     public String getNextAppId(String appIdPrefix, String webAppName) {
         String sequence = null;
         String like = appIdPrefix + "%";
-        // Query to get the last ID from Application Table
-        String strQuery = "select a.id.applicationId from Application a " +
-                "where a.id.applicationId like :like ORDER BY 1 DESC";
+        String strQuery = "select a.id.applicationId from Application a where a.id.applicationId like :like ORDER BY 1 DESC";
         Query query = entityManager.createQuery(strQuery);
         query.setParameter("like", like);
         List<String> list = query.getResultList();
-
-        if (list.size() != 0) {
-            sequence = list.get(0).toString().trim();
-            // Assuming strict format length for substring.
-            // 510.20/ANC/25/0001 -> 14th index starts the number
-            if(sequence.length() > 14) {
-                sequence = sequence.substring(14);
-                Integer i = Integer.parseInt(sequence) + 1;
-                sequence = i.toString();
-            } else {
-                sequence = "1"; // Fallback if format is unexpected
-            }
+        if (!list.isEmpty()) {
+            sequence = list.get(0).trim();
+            sequence = sequence.substring(14); // tail number
+            Integer i = Integer.parseInt(sequence) + 1;
+            sequence = i.toString();
         } else {
             sequence = "0001";
         }
-
-        return padSequence(sequence);
+        if (sequence.length() == 1) return "000" + sequence;
+        else if (sequence.length() == 2) return "00" + sequence;
+        else if (sequence.length() == 3) return "0" + sequence;
+        else return sequence;
     }
 
     @SuppressWarnings("unchecked")
     public String getNextApplicationNo(String applicationNoPrefix, String webAppName) {
         String sequence = null;
         String like = applicationNoPrefix + "%";
-        // Native Query to get last No from APPLICATIONS Table
         String strQuery = "select APPLICATION_NO from APPLICATIONS where APPLICATION_NO like '" + like + "' ORDER BY 1 DESC";
-
         Query query = entityManager.createNativeQuery(strQuery);
         List<String> list = query.getResultList();
-
-        if (list.size() != 0) {
-            sequence = list.get(0).toString().trim();
-            // Assuming strict format length for substring
-            if(sequence.length() > 14) {
-                sequence = sequence.substring(14);
-                Integer i = Integer.parseInt(sequence) + 1;
-                sequence = i.toString();
-            } else {
-                sequence = "1";
-            }
+        if (!list.isEmpty()) {
+            sequence = list.get(0).trim();
+            sequence = sequence.substring(14); // tail number
+            Integer i = Integer.parseInt(sequence) + 1;
+            sequence = i.toString();
         } else {
             sequence = "0001";
         }
-
-        return padSequence(sequence);
+        if (sequence.length() == 1) return "000" + sequence;
+        else if (sequence.length() == 2) return "00" + sequence;
+        else if (sequence.length() == 3) return "0" + sequence;
+        else return sequence;
     }
 
     // Helper to pad with zeros
