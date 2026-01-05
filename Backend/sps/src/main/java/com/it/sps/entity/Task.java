@@ -40,4 +40,8 @@ public class Task implements Serializable {
     public void setPage(String page) { this.page = page; }
     public MainMenu getMainMenu() { return mainMenu; }
     public void setMainMenu(MainMenu mainMenu) { this.mainMenu = mainMenu; }
+
+    public Integer getOrderKey() { return orderKey; }
+    public void setOrderKey(Integer orderKey) { this.orderKey = orderKey; }
+
 }

@@ -47,4 +47,8 @@ public class MainMenu implements Serializable {
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
+
+    public Integer getOrderKey() {
+        return orderKey;
+    }
 }

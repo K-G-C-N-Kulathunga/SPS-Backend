@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "TASK_USER_CATEGORY")
+@IdClass(TaskUserCategoryId.class)
 public class TaskUserCategory implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -20,62 +21,35 @@ public class TaskUserCategory implements Serializable {
     @Column(name = "ACTIVITY_CODE", length = 20, nullable = false)
     private String activityCode;
 
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ROLE_CODE", referencedColumnName = "USER_ID", insertable = false, updatable = false)
     private UserCategory userCategory;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MENU_CODE", referencedColumnName = "MENU_CODE", insertable = false, updatable = false)
     private MainMenu mainMenu;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACTIVITY_CODE", referencedColumnName = "ACTIVITY_CODE", insertable = false, updatable = false)
     private Task task;
 
     public TaskUserCategory() {}
 
-    public String getUserRoleCode() {
-        return userRoleCode;
-    }
+    public String getUserRoleCode() { return userRoleCode; }
+    public void setUserRoleCode(String userRoleCode) { this.userRoleCode = userRoleCode; }
 
-    public void setUserRoleCode(String userRoleCode) {
-        this.userRoleCode = userRoleCode;
-    }
+    public String getMenuCode() { return menuCode; }
+    public void setMenuCode(String menuCode) { this.menuCode = menuCode; }
 
-    public String getMenuCode() {
-        return menuCode;
-    }
+    public String getActivityCode() { return activityCode; }
+    public void setActivityCode(String activityCode) { this.activityCode = activityCode; }
 
-    public void setMenuCode(String menuCode) {
-        this.menuCode = menuCode;
-    }
+    public UserCategory getUserCategory() { return userCategory; }
+    public void setUserCategory(UserCategory userCategory) { this.userCategory = userCategory; }
 
-    public String getActivityCode() {
-        return activityCode;
-    }
-
-    public void setActivityCode(String activityCode) {
-        this.activityCode = activityCode;
-    }
-
-    public UserCategory getUserCategory() {
-        return userCategory;
-    }
-
-    public void setUserCategory(UserCategory userCategory) {
-        this.userCategory = userCategory;
-    }
-
-    public MainMenu getMainMenu() {
-        return mainMenu;
-    }
-
-    public void setMainMenu(MainMenu mainMenu) {
-        this.mainMenu = mainMenu;
-    }
+    public MainMenu getMainMenu() { return mainMenu; }
+    public void setMainMenu(MainMenu mainMenu) { this.mainMenu = mainMenu; }
 
     public Task getTask() { return task; }
-
     public void setTask(Task task) { this.task = task; }
 }
