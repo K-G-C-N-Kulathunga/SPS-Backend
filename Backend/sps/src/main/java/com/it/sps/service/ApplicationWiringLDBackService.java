@@ -61,7 +61,7 @@ public class ApplicationWiringLDBackService {
     private DashboardRepository dashboardRepository;
 
 
-    private static final String DEFAULT_DEPT_ID = "510.20"; //423.10
+    private static final String DEFAULT_DEPT_ID = "423.10"; //423.10 510.20
     private static final String UPLOAD_DIR = "C:/SPS_Uploads/";
 
     @Transactional
@@ -191,10 +191,12 @@ public class ApplicationWiringLDBackService {
                     .atStartOfDay()
                     .atZone(ZoneId.systemDefault())
                     .toInstant();
-            dashboard.setAppSubmittedDate(startOfDay);
+
+            Date submittedDate = Date.from(startOfDay);
+            dashboard.setAppSubmittedDate(submittedDate);
             dashboard.setAppSubmittedBy("online");
             dashboard.setStatus(application.getStatus()); // "N"
-            dashboard.setStatusChangedDate(startOfDay);
+            dashboard.setStatusChangedDate(submittedDate);
             dashboard.setStatusChangedBy("online");
             dashboard.setStatusChangedReason("Submitted online");
             dashboard.setOriginatedBy("WEB");
@@ -392,10 +394,12 @@ public class ApplicationWiringLDBackService {
                     .atStartOfDay()
                     .atZone(ZoneId.systemDefault())
                     .toInstant();
-            dashboard.setAppSubmittedDate(startOfDay);
+
+            Date submittedDate = Date.from(startOfDay);
+            dashboard.setAppSubmittedDate(submittedDate);
             dashboard.setAppSubmittedBy("online");
             dashboard.setStatus(application.getStatus());
-            dashboard.setStatusChangedDate(startOfDay);
+            dashboard.setStatusChangedDate(submittedDate);
             dashboard.setStatusChangedBy("online");
             dashboard.setStatusChangedReason("Updated online");
             dashboard.setOriginatedBy("WEB");
@@ -443,47 +447,66 @@ public class ApplicationWiringLDBackService {
     // ===== Sequences / IDs =====
 
     @SuppressWarnings("unchecked")
-    public String getNextAppId(String appIdPrefix, String webAppName) {
-        String sequence = null;
-        String like = appIdPrefix + "%";
-        String strQuery = "select a.id.applicationId from Application a where a.id.applicationId like :like ORDER BY 1 DESC";
-        Query query = entityManager.createQuery(strQuery);
-        query.setParameter("like", like);
-        List<String> list = query.getResultList();
+    public synchronized String getNextAppId(String deptId, String webAppName) {
+
+        String like = deptId + "/ANC/%";
+
+        String sql =
+                "SELECT application_id " +
+                        "FROM (" +
+                        "  SELECT application_id " +
+                        "  FROM applications " +
+                        "  WHERE application_id LIKE :like " +
+                        "  ORDER BY application_id DESC" +
+                        ") WHERE ROWNUM = 1";
+
+        List<String> list = entityManager
+                .createNativeQuery(sql)
+                .setParameter("like", like)
+                .getResultList();
+
+        int nextSeq = 1;
+
         if (!list.isEmpty()) {
-            sequence = list.get(0).trim();
-            sequence = sequence.substring(14); // tail number
-            Integer i = Integer.parseInt(sequence) + 1;
-            sequence = i.toString();
-        } else {
-            sequence = "0001";
+            String lastId = list.get(0);
+            String lastSeq = lastId.substring(lastId.lastIndexOf("/") + 1);
+            nextSeq = Integer.parseInt(lastSeq) + 1;
         }
-        if (sequence.length() == 1) return "000" + sequence;
-        else if (sequence.length() == 2) return "00" + sequence;
-        else if (sequence.length() == 3) return "0" + sequence;
-        else return sequence;
+
+        return String.format("%04d", nextSeq);
     }
 
+
     @SuppressWarnings("unchecked")
-    public String getNextApplicationNo(String applicationNoPrefix, String webAppName) {
-        String sequence = null;
-        String like = applicationNoPrefix + "%";
-        String strQuery = "select APPLICATION_NO from APPLICATIONS where APPLICATION_NO like '" + like + "' ORDER BY 1 DESC";
-        Query query = entityManager.createNativeQuery(strQuery);
-        List<String> list = query.getResultList();
+    public synchronized String getNextApplicationNo(String deptId, String webAppName) {
+
+        String like = deptId + "/ENC/%";
+
+        String sql =
+                "SELECT application_no " +
+                        "FROM (" +
+                        "  SELECT application_no " +
+                        "  FROM applications " +
+                        "  WHERE application_no LIKE :like " +
+                        "  ORDER BY application_no DESC" +
+                        ") WHERE ROWNUM = 1";
+
+        List<String> list = entityManager
+                .createNativeQuery(sql)
+                .setParameter("like", like)
+                .getResultList();
+
+        int nextSeq = 1;
+
         if (!list.isEmpty()) {
-            sequence = list.get(0).trim();
-            sequence = sequence.substring(14); // tail number
-            Integer i = Integer.parseInt(sequence) + 1;
-            sequence = i.toString();
-        } else {
-            sequence = "0001";
+            String lastNo = list.get(0);
+            String lastSeq = lastNo.substring(lastNo.lastIndexOf("/") + 1);
+            nextSeq = Integer.parseInt(lastSeq) + 1;
         }
-        if (sequence.length() == 1) return "000" + sequence;
-        else if (sequence.length() == 2) return "00" + sequence;
-        else if (sequence.length() == 3) return "0" + sequence;
-        else return sequence;
+
+        return String.format("%04d", nextSeq);
     }
+
 
     // Helper to pad with zeros
     private String padSequence(String sequence) {
