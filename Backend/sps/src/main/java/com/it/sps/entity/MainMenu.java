@@ -21,34 +21,17 @@ public class MainMenu implements Serializable {
     @Column(name = "ORDER_KEY")
     private Integer orderKey;
 
-    public MainMenu() {
-    }
+    public MainMenu() {}
 
-    public String getMenuCode() {
-        return menuCode;
-    }
+    public String getMenuCode() { return menuCode; }
+    public void setMenuCode(String menuCode) { this.menuCode = menuCode; }
 
-    public void setMenuCode(String menuCode) {
-        this.menuCode = menuCode;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public String getDescription() {
-        return description;
-    }
+    public String getDisplayName() { return displayName; }
+    public void setDisplayName(String displayName) { this.displayName = displayName; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public Integer getOrderKey() {
-        return orderKey;
-    }
+    public Integer getOrderKey() { return orderKey; }
+    public void setOrderKey(Integer orderKey) { this.orderKey = orderKey; }
 }

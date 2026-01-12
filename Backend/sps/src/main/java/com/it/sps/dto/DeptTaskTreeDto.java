@@ -1,29 +1,24 @@
 package com.it.sps.dto;
 
-public class MainMenuDTO {
+import java.util.List;
+
+public class DeptTaskTreeDto {
     private String menuCode;
-    private String description;
     private String displayName;
     private Integer orderKey;
+    private List<DeptTaskTreeTaskDto> tasks;
 
-    public MainMenuDTO() {}
-
-    public MainMenuDTO(String menuCode, String description, String displayName, Integer orderKey) {
-        this.menuCode = menuCode;
-        this.description = description;
-        this.displayName = displayName;
-        this.orderKey = orderKey;
-    }
+    public DeptTaskTreeDto() {}
 
     public String getMenuCode() { return menuCode; }
     public void setMenuCode(String menuCode) { this.menuCode = menuCode; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
 
     public String getDisplayName() { return displayName; }
     public void setDisplayName(String displayName) { this.displayName = displayName; }
 
     public Integer getOrderKey() { return orderKey; }
     public void setOrderKey(Integer orderKey) { this.orderKey = orderKey; }
+
+    public List<DeptTaskTreeTaskDto> getTasks() { return tasks; }
+    public void setTasks(List<DeptTaskTreeTaskDto> tasks) { this.tasks = tasks; }
 }

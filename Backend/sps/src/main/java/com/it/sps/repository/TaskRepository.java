@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface TaskRepository extends JpaRepository<Task, String> {
+    List<Task> findByMenuCode(String menuCode);
 
     @Query("""
         SELECT new com.it.sps.dto.TaskDTO(
@@ -36,6 +37,8 @@ public interface TaskRepository extends JpaRepository<Task, String> {
         ORDER BY t.orderKey ASC
     """)
     List<TaskDTO> findByMenuCodeAsDto(@Param("menuCode") String menuCode);
+
+    List<Task> findByMenuCodeOrderByOrderKeyAscActivityAsc(String menuCode);
 
     boolean existsByActivityCode(String activityCode);
 }
