@@ -55,7 +55,6 @@ public class ApplicationDTO {
     private String isTariffChange;
     private String isSequenceChange;
     private String existTariff;
-    
 
 }
 
