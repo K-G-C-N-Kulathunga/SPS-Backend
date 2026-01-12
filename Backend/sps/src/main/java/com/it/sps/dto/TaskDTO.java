@@ -5,6 +5,9 @@ public class TaskDTO {
     private String activityCode;
     private String activityName;
     private String page;
+    private Integer orderKey;
+
+    public TaskDTO() {}
 
     public TaskDTO(String menuCode, String activityCode, String activityName, String page) {
         this.menuCode = menuCode;
@@ -13,12 +16,26 @@ public class TaskDTO {
         this.page = page;
     }
 
+    public TaskDTO(String menuCode, String activityCode, String activityName, String page, Integer orderKey) {
+        this.menuCode = menuCode;
+        this.activityCode = activityCode;
+        this.activityName = activityName;
+        this.page = page;
+        this.orderKey = orderKey;
+    }
+
     public String getMenuCode() { return menuCode; }
     public void setMenuCode(String menuCode) { this.menuCode = menuCode; }
+
     public String getActivityCode() { return activityCode; }
     public void setActivityCode(String activityCode) { this.activityCode = activityCode; }
+
     public String getActivityName() { return activityName; }
     public void setActivityName(String activityName) { this.activityName = activityName; }
+
     public String getPage() { return page; }
     public void setPage(String page) { this.page = page; }
+
+    public Integer getOrderKey() { return orderKey; }
+    public void setOrderKey(Integer orderKey) { this.orderKey = orderKey; }
 }
