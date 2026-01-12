@@ -4,8 +4,9 @@ import com.it.sps.dto.MainMenuDTO;
 import java.util.List;
 
 public interface MainMenuService {
-
-    List<MainMenuDTO> getAllMenus();
-
-    MainMenuDTO getMenuByCode(String menuCode);
+    MainMenuDTO create(MainMenuDTO dto);
+    MainMenuDTO update(String menuCode, MainMenuDTO dto);
+    MainMenuDTO getById(String menuCode);
+    List<MainMenuDTO> getAllOrdered();
+    void delete(String menuCode);
 }

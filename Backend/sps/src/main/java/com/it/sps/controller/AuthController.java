@@ -21,11 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
-public class UserController {
+public class AuthController {
     
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private SausermRepository sausermRepository;
     
