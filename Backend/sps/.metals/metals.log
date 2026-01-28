@@ -1,0 +1,5 @@
+2026.01.26 11:03:52 INFO  Started: Metals version 1.6.5 in folders 'C:\Users\NUWAN CHANUKA\OneDrive\Documents\GitHub\SPS-Backend\Backend\sps' for client Visual Studio Code 1.108.1.
+2026.01.26 11:03:52 INFO  Memory monitor started
+2026.01.26 11:03:53 WARN  Using H2 2.4.240 which is newer than the version Flyway has been verified with. The latest verified version of H2 is 2.3.232.
+Jan 28, 2026 10:50:27 AM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
