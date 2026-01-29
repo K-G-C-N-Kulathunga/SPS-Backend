@@ -68,6 +68,7 @@ public class SecurityConfig {
                 // Permit preflight requests for CORS
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/login/**").permitAll()
+                .requestMatchers("/piv-cost-item/**").permitAll()
                 .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());
