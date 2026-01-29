@@ -23,3 +23,9 @@ WARNING: Unmatched cancel notification for request id 8
 2026.01.28 11:18:11 INFO  no build target found for C:\Users\NUWAN CHANUKA\OneDrive\Documents\GitHub\SPS-Backend\Backend\sps\src\main\java\com\it\sps\service\TaskUserCategoryServiceImpl.java. Using fallback presentation compiler.
 Jan 28, 2026 11:18:19 AM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
 INFO: Unsupported notification method: $/setTrace
+Jan 28, 2026 11:27:35 AM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
+2026.01.29 11:13:04 INFO  Shutting down server
+2026.01.29 11:13:04 INFO  Memory monitor stopped
+2026.01.29 11:13:04 INFO  shutting down Metals
+2026.01.29 11:13:04 INFO  Exiting server
