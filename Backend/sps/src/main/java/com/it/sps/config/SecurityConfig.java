@@ -69,10 +69,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/login/**").permitAll()
                         .requestMatchers("/report/**").permitAll()
-                                .requestMatchers("/piv-cost-item/**").permitAll()
+                        .requestMatchers("/piv-cost-item/**").permitAll()
                         .anyRequest().authenticated()
-
-                .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());
 
