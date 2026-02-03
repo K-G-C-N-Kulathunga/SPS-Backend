@@ -65,11 +65,12 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> {})
                 .authorizeHttpRequests(auth -> auth
-                // Permit preflight requests for CORS
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers("/api/login/**").permitAll()
-                .requestMatchers("/piv-cost-item/**").permitAll()
-                .anyRequest().authenticated()
+                        // Permit preflight requests for CORS
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/api/login/**").permitAll()
+                        .requestMatchers("/report/**").permitAll()
+                        .requestMatchers("/piv-cost-item/**").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());
 
