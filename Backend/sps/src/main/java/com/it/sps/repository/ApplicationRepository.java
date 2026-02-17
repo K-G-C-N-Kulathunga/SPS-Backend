@@ -10,8 +10,12 @@ import com.it.sps.entity.Application;
 import com.it.sps.entity.ApplicationPK;
 
 public interface ApplicationRepository extends JpaRepository<Application,ApplicationPK>{
-	
-		 @Query(" SELECT a FROM Application a WHERE a.applicationNo=:applicationNo ")
+
+	@Query("SELECT a FROM Application a WHERE a.applicationNo = :applicationNo")
+	Optional<Application> findByApplicationNo(@Param("applicationNo") String applicationNo);
+
+
+	@Query(" SELECT a FROM Application a WHERE a.applicationNo=:applicationNo ")
 		 Application findAllWithApplicant(@Param("applicationNo")String applicationNo);
 
 		 @Query("SELECT a FROM Application a")
@@ -57,4 +61,7 @@ public interface ApplicationRepository extends JpaRepository<Application,Applica
 		@Query("SELECT a.applicationNo FROM Application a WHERE a.id.deptId = :deptId")
 		List<String> findApplicationNosByDeptId(@Param("deptId") String deptId);
 
+	// Add this method:
+	@Query("SELECT applicationNo FROM  Application  WHERE ROWNUM <= 10")
+	List<String> findTop10RecentApplicationNos();
 }
