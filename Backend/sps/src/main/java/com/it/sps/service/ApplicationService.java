@@ -392,4 +392,12 @@ public class ApplicationService {
         application.setUpdDate(null);
         application.setUpdTime(null);
     }
+
+//    List<Application> getRecentApplications(int limit);
+// Fix the method implementation:
+//        @Override
+// Change return type from List<Application> to List<String>
+public List<String> getRecentApplications(int limit) {
+    return applicationRepository.findTop10RecentApplicationNos();
+}
 }

@@ -194,4 +194,13 @@ public class ApplicationController {
         return application.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    // ===== NEW ENDPOINT: Get 10 most recent applications =====
+    // Change return type from ResponseEntity<List<Application>> to ResponseEntity<List<String>>
+    @GetMapping("/recent")
+    public ResponseEntity<List<String>> getRecentApplications() {
+        List<String> recentApplications = applicationService.getRecentApplications(10);
+        return ResponseEntity.ok(recentApplications);
+    }
+
 }
