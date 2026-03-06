@@ -37,6 +37,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 /**
  * Persists APPLICATIONS + related rows from a full form submission.
  * Also updates ONLINE_APPLICATION (when tempId is provided)
@@ -45,6 +49,8 @@ import java.util.List;
 @Service
 @Transactional
 public class ApplicationWiringLDService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationWiringLDService.class);
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -139,7 +145,25 @@ public class ApplicationWiringLDService {
         applicationRepository.save(application);
 
         // ===== WIRING_LAND_DETAIL =====
-        saveWiringDetail(formData.getWiringLandDetailDto());
+        logger.debug("DEBUG: Before saving wiring details for applicationId: {}", applicationId);
+
+        WiringLandDetailDto wiringDto = formData.getWiringLandDetailDto();
+        if (wiringDto == null) {
+            logger.error("DEBUG: WiringLandDetailDto is NULL for applicationId: {}", applicationId);
+            throw new IllegalArgumentException("WiringLandDetailDto cannot be null");
+        }
+
+        logger.debug("DEBUG: WiringLandDetailDto data - applicationId: {}, deptId: {}",
+                wiringDto.getApplicationId(), wiringDto.getDeptId());
+
+        try {
+            saveWiringDetail(wiringDto);
+            logger.info("DEBUG: Successfully saved wiring details for applicationId: {}", applicationId);
+        } catch (Exception e) {
+            logger.error("DEBUG: ERROR saving wiring details for applicationId {}: {}",
+                    applicationId, e.getMessage(), e);
+            throw new RuntimeException("Failed to save wiring details: " + e.getMessage(), e);
+        }
 
         // ===== APPLICATION_REFERENCE =====
         ApplicationReference appRef = new ApplicationReference();
@@ -246,46 +270,64 @@ public class ApplicationWiringLDService {
     // ===== Sequences / IDs =====
 
     @SuppressWarnings("unchecked")
-    public String getNextAppId(String appIdPrefix, String webAppName) {
-        String sequence = null;
-        String like = appIdPrefix + "%";
-        String strQuery = "select a.id.applicationId from Application a where a.id.applicationId like :like ORDER BY 1 DESC";
-        Query query = entityManager.createQuery(strQuery);
-        query.setParameter("like", like);
-        List<String> list = query.getResultList();
+    public synchronized String getNextAppId(String deptId, String webAppName) {
+
+        String like = deptId + "/ANC/%";
+
+        String sql =
+                "SELECT application_id " +
+                        "FROM (" +
+                        "  SELECT application_id " +
+                        "  FROM applications " +
+                        "  WHERE application_id LIKE :like " +
+                        "  ORDER BY application_id DESC" +
+                        ") WHERE ROWNUM = 1";
+
+        List<String> list = entityManager
+                .createNativeQuery(sql)
+                .setParameter("like", like)
+                .getResultList();
+
+        int nextSeq = 1;
+
         if (!list.isEmpty()) {
-            sequence = list.get(0).trim();
-            sequence = sequence.substring(14); // tail number
-            Integer i = Integer.parseInt(sequence) + 1;
-            sequence = i.toString();
-        } else {
-            sequence = "0001";
+            String lastId = list.get(0);
+            String lastSeq = lastId.substring(lastId.lastIndexOf("/") + 1);
+            nextSeq = Integer.parseInt(lastSeq) + 1;
         }
-        if (sequence.length() == 1) return "000" + sequence;
-        else if (sequence.length() == 2) return "00" + sequence;
-        else if (sequence.length() == 3) return "0" + sequence;
-        else return sequence;
+
+        return String.format("%04d", nextSeq);
     }
 
+
     @SuppressWarnings("unchecked")
-    public String getNextApplicationNo(String applicationNoPrefix, String webAppName) {
-        String sequence = null;
-        String like = applicationNoPrefix + "%";
-        String strQuery = "select APPLICATION_NO from APPLICATIONS where APPLICATION_NO like '" + like + "' ORDER BY 1 DESC";
-        Query query = entityManager.createNativeQuery(strQuery);
-        List<String> list = query.getResultList();
+    public synchronized String getNextApplicationNo(String deptId, String webAppName) {
+
+        String like = deptId + "/ENC/%";
+
+        String sql =
+                "SELECT application_no " +
+                        "FROM (" +
+                        "  SELECT application_no " +
+                        "  FROM applications " +
+                        "  WHERE application_no LIKE :like " +
+                        "  ORDER BY application_no DESC" +
+                        ") WHERE ROWNUM = 1";
+
+        List<String> list = entityManager
+                .createNativeQuery(sql)
+                .setParameter("like", like)
+                .getResultList();
+
+        int nextSeq = 1;
+
         if (!list.isEmpty()) {
-            sequence = list.get(0).trim();
-            sequence = sequence.substring(14); // tail number
-            Integer i = Integer.parseInt(sequence) + 1;
-            sequence = i.toString();
-        } else {
-            sequence = "0001";
+            String lastNo = list.get(0);
+            String lastSeq = lastNo.substring(lastNo.lastIndexOf("/") + 1);
+            nextSeq = Integer.parseInt(lastSeq) + 1;
         }
-        if (sequence.length() == 1) return "000" + sequence;
-        else if (sequence.length() == 2) return "00" + sequence;
-        else if (sequence.length() == 3) return "0" + sequence;
-        else return sequence;
+
+        return String.format("%04d", nextSeq);
     }
 
     public String createNewApplicationId(String deptId) {
