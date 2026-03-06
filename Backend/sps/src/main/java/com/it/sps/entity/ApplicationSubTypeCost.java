@@ -29,6 +29,9 @@ public class ApplicationSubTypeCost {
     @Column(name = "TOTAL_CALC_ITEM", length = 20)
     private String totalCalcItem;
 
+    @Column(name = "IS_ACTIVE", nullable = false)
+    private Integer isActive; // (1=active,0=false)
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "COST_ITEM_CODE",

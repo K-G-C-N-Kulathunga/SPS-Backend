@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
+import java.util.Date;
 
 import java.math.BigDecimal;
 
@@ -35,6 +36,22 @@ public class CostItem {
 
     @Column(name = "Percent_Calc_Item", length = 20)
     private String percentCalcItem;
+
+    @Column(name = "UPD_USER", length = 20)
+    private String updUser;
+
+    @Column(name = "ADD_USER", length = 20)
+    private String addUser;
+
+    @Column(name = "PARENT_KEY", precision = 4,scale = 0)
+    private Integer parentKey;
+
+    @Column(name = "ADDED_DATE")
+//    @Temporal(TemporalType.TIMESTAMP)
+    private Date addedDate;
+
+    @Column(name = "UPD_DATE")
+    private Date updDate;
 
     // Optional helpers for UI (0/1 → Y/N)
     @Transient
