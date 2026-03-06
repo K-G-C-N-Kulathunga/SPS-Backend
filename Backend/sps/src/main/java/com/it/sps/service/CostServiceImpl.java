@@ -50,6 +50,10 @@ public class CostServiceImpl implements CostService {
             dto.setIsTotal(Boolean.TRUE.equals(c.getIsTotal()) ? 1 : 0);
             dto.setPercentCalcItem(c.getPercentCalcItem());
             dto.setTotalCalcItem(m.getTotalCalcItem());
+            dto.setIsActive(m.getIsActive());
+            dto.setAddUser(c.getAddUser());
+            dto.setParentKey(c.getParentKey());
+            dto.setAddedDate(c.getAddedDate());
 
             return dto;
         }).toList();

@@ -8,7 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/cost")
-public class CostController {
+public class CostController {   
 
     private final CostService costService;
 
