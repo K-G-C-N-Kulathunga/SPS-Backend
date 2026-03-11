@@ -1,6 +1,7 @@
 package com.it.sps.dto;
 
 import java.util.Date;
+import java.math.BigDecimal;
 
 public class CostItemDTO {
 
@@ -18,6 +19,7 @@ public class CostItemDTO {
     private Date updDate;
     private String updUser;
     private Integer isActive;
+    private BigDecimal amount;
 
     public Integer getIsActive() {return isActive;}
 
@@ -109,5 +111,13 @@ public class CostItemDTO {
 
     public void setAddedDate(Date addedDate) {
         this.addedDate = addedDate;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 }
