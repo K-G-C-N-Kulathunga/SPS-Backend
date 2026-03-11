@@ -3,6 +3,7 @@ package com.it.sps.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -31,6 +32,9 @@ public class ApplicationSubTypeCost {
 
     @Column(name = "IS_ACTIVE", nullable = false)
     private Integer isActive; // (1=active,0=false)
+
+    @Column(name = "AMOUNT")
+    private BigDecimal amount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(

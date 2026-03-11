@@ -54,6 +54,7 @@ public class CostServiceImpl implements CostService {
             dto.setAddUser(c.getAddUser());
             dto.setParentKey(c.getParentKey());
             dto.setAddedDate(c.getAddedDate());
+            dto.setAmount(m.getAmount());
 
             return dto;
         }).toList();
