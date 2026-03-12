@@ -33,8 +33,8 @@ public class ApplicationSubTypeCost {
     @Column(name = "IS_ACTIVE", nullable = false)
     private Integer isActive; // (1=active,0=false)
 
-    @Column(name = "AMOUNT")
-    private BigDecimal amount;
+    @Column(name = "AMOUNT", length = 20)
+    private String amount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
