@@ -19,7 +19,7 @@ public class CostItemDTO {
     private Date updDate;
     private String updUser;
     private Integer isActive;
-    private BigDecimal amount;
+    private String amount;
 
     public Integer getIsActive() {return isActive;}
 
@@ -113,11 +113,11 @@ public class CostItemDTO {
         this.addedDate = addedDate;
     }
 
-    public BigDecimal getAmount() {
+    public String getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(String amount) {
         this.amount = amount;
     }
 }
