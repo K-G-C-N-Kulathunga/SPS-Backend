@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class SpsErestServiceImpl implements SpsErestService {
@@ -99,4 +101,10 @@ public class SpsErestServiceImpl implements SpsErestService {
     private static BigDecimal bd(int v) { return new BigDecimal(v); }
     private static BigDecimal nz(BigDecimal in, BigDecimal def) { return in == null ? def : in; }
     private static String nz(String in, String def) { return (in == null || in.isBlank()) ? def : in; }
+
+    @Override
+    public List<SpsErest> getByApplicationNo(String applicationNo) {
+        return spsErestRepository.findByIdApplicationNo(applicationNo);
+    }
+
 }

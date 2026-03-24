@@ -4,8 +4,11 @@ import com.it.sps.dto.SpsErestDto;
 import com.it.sps.entity.SpsErest;
 import com.it.sps.entity.SpsErestPK;
 
+import java.util.List;
+
 public interface SpsErestService {
     SpsErest save(SpsErestDto dto);                    // create or update (upsert)
     SpsErest findOne(String applicationNo, String deptId);
     void delete(String applicationNo, String deptId);
+    List<SpsErest> getByApplicationNo(String applicationNo);
 }
