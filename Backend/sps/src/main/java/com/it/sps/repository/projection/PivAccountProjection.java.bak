@@ -1,7 +1,5 @@
 package com.it.sps.repository.projection;
 
-import java.math.BigDecimal;
-
 public interface PivAccountProjection {
 
     // Must exactly match query alias

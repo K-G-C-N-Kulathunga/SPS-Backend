@@ -1,52 +1,3 @@
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.web.SecurityFilterChain;
-//
-//@Configuration
-//public class SecurityConfig {
-//
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf(csrf -> csrf.disable())  // disable CSRF for APIs
-//                .cors(cors -> {})              // enable CORS with your CorsConfigurer bean
-//                .authorizeHttpRequests(auth -> auth
-//                        .anyRequest().permitAll()  // allow all requests
-//                )
-//                .httpBasic(httpBasic -> httpBasic.disable())   // disable basic auth
-//                .formLogin(form -> form.disable());           // disable login form
-//
-//        return http.build();
-//    }
-//}
-
-//package com.it.sps.config;
-//
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.security.config.Customizer;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.web.SecurityFilterChain;
-//
-//@Configuration
-//public class SecurityConfig {
-//
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf(csrf -> csrf.disable())
-//                .cors(cors -> {}) // will use your WebConfig CORS
-//                .authorizeHttpRequests(auth -> auth
-//                        .anyRequest().authenticated()
-//                )
-//                .httpBasic(Customizer.withDefaults()); // ✅ enable Basic Auth
-//
-//        return http.build();
-//    }
-//}
-
-
 package com.it.sps.config;
 
 import org.springframework.context.annotation.Bean;
@@ -62,17 +13,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
-                .cors(cors -> {})
+                .csrf(csrf -> csrf.disable()) // disable CSRF for APIs
+                .cors(cors -> {})             // enable CORS with your WebConfig
                 .authorizeHttpRequests(auth -> auth
-                        // Permit preflight requests for CORS
+                        // ✅ Permit preflight OPTIONS requests for CORS
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // ✅ Permit public endpoints if any
                         .requestMatchers("/api/login/**").permitAll()
                         .requestMatchers("/report/**").permitAll()
                         .requestMatchers("/piv-cost-item/**").permitAll()
+                        // ✅ Everything else requires Basic Auth
                         .anyRequest().authenticated()
                 )
-                .httpBasic(Customizer.withDefaults());
+                .httpBasic(Customizer.withDefaults()); // enable Basic Auth
 
         return http.build();
     }

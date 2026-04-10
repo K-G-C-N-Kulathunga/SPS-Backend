@@ -1,21 +1,16 @@
 package com.it.sps.dto;
 
-import java.math.BigDecimal;
-
 public class PivChargeDto {
 
     private String codeNo;
     private String description;
-    private BigDecimal amount;
 
     public PivChargeDto() {
     }
 
-
-    public PivChargeDto(String codeNo, String description, BigDecimal amount) {
+    public PivChargeDto(String codeNo, String description) {
         this.codeNo = codeNo;
         this.description = description;
-        this.amount = amount;
     }
 
     public String getCodeNo() {
@@ -32,15 +27,5 @@ public class PivChargeDto {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
     }
 }
