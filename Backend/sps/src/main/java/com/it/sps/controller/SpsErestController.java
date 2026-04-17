@@ -5,9 +5,10 @@ import com.it.sps.entity.SpsErest;
 import com.it.sps.service.SpsErestService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
-@RequestMapping("/sps/api/spserest") // align with your other controllers
+@RequestMapping("/api/spserest") // align with your other controllers
 public class SpsErestController {
 
     private final SpsErestService spsErestService;
@@ -33,5 +34,14 @@ public class SpsErestController {
                                        @PathVariable String deptId) {
         spsErestService.delete(applicationNo, deptId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/estimation")
+    public ResponseEntity<List<SpsErest>> getByApplicationNo(
+            @RequestParam String applicationNo) {
+
+        return ResponseEntity.ok(
+                spsErestService.getByApplicationNo(applicationNo)
+        );
     }
 }

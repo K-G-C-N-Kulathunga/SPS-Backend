@@ -16,4 +16,7 @@ public interface SpsErestRepository extends JpaRepository<SpsErest, SpsErestPK> 
 
 	@Query("SELECT DISTINCT s.id.applicationNo FROM SpsErest s WHERE s.id.deptId = :deptId")
 	List<String> findUsedApplicationNosByDeptId(@Param("deptId") String deptId);
+
+	List<SpsErest> findByIdApplicationNo(String applicationNo);
+
 }
